@@ -1,0 +1,13 @@
+# calculator_messages.yml
+
+welcome: "Welcome to Calculator! Please enter your name:"
+valid_name: "Please enter a valid name"
+first_number: "What's the first number?"
+valid_number: "Hmm... please use a valid number"
+second_number: What is the second number?
+operation:   What operation should we perfom?
+  1) Add
+  2) Subtract
+  3) Mutiply
+  4) Divide
+
