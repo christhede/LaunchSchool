@@ -1,5 +1,8 @@
 VALID_CHOICES = %w(Rock Paper Scissors Lizard Spock)
 
+computer_score = []
+player_score = []
+
 def prompt(message)
   puts "=> #{message}"
 end
@@ -19,43 +22,41 @@ end
 
 def display_results(player, computer)
   if win?(player, computer)
-    prompt("You won!")
+    "You won!"
   elsif win?(computer, player)
-    prompt("Computer won.")
+    "Computer won."
   else
     prompt("It's a tie")
   end
 end
-
-computer_score = []
-player_score = []
 
 loop do
   loop do
     choice = ""
     loop do
       prompt("Choose one: #{VALID_CHOICES.join(', ')}")
-      choice = gets.chomp
+      choice = gets.chomp.downcase
 
       if VALID_CHOICES.include?(choice)
         break
-      elsif choice.downcase.start_with?("s")
+      elsif choice.start_with?("s")
         prompt("do you mean Spock or Scissors?")
-        s_answer = gets.chomp
+        s_answer = gets.chomp.downcase
+        # update s_answer to loop and correct things
           if s_answer == "Spock"
             choice = "Spock"
             break
-          else 
-            choice = "Scissors"
+          elsif choice == "Scissors"
             break
           end
-      elsif choice.downcase.start_with?("p")
+          # update choice == "P"
+      elsif choice.start_with?("p")
         choice = "Paper"
         break
-      elsif choice.downcase.start_with?("l")
+      elsif choice.start_with?("l")
         choice = "Lizard"
         break
-      elsif choice.downcase.start_with?("r")
+      elsif choice.start_with?("r")
         choice = "Rock"
         break
       else
