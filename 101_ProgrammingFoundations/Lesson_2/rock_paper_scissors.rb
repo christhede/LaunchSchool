@@ -20,16 +20,6 @@ def win?(first, second)
     (first == "Rock" && second == "Scissors")
 end
 
-def display_results(player, computer)
-  if win?(player, computer)
-    "You won!"
-  elsif win?(computer, player)
-    "Computer won."
-  else
-    prompt("It's a tie")
-  end
-end
-
 loop do
   loop do
     choice = ""
@@ -68,12 +58,14 @@ loop do
 
     prompt("You chose #{choice}, computer chose #{computer_choice}.")
 
-    score = display_results(choice, computer_choice)
-
-    if score == "Computer won."
-      computer_score << 1
-    elsif score == "You won!"
+    if win?(choice, computer_choice)
+      prompt("You won!")
       player_score << 1
+    elsif win?(computer_choice, choice)
+      prompt("Computer won.")
+      computer_score << 1
+    else
+      prompt("It's a tie")
     end
 
     prompt("The score is => Computer: #{computer_score.sum}, Player: #{player_score.sum}")
