@@ -1,7 +1,9 @@
 VALID_CHOICES = %w(Rock Paper Scissors Lizard Spock)
 
-computer_score = []
-player_score = []
+computer_score = 0
+player_score = 0
+choice = ""
+s_choice = ""
 
 def prompt(message)
   puts "=> #{message}"
@@ -22,31 +24,33 @@ end
 
 loop do
   loop do
-    choice = ""
     loop do
       prompt("Choose one: #{VALID_CHOICES.join(', ')}")
-      choice = gets.chomp.downcase
+      choice = gets.chomp.downcase.capitalize
 
       if VALID_CHOICES.include?(choice)
         break
-      elsif choice.start_with?("s")
-        prompt("do you mean Spock or Scissors?")
-        s_answer = gets.chomp.downcase
-        # update s_answer to loop and correct things
-          if s_answer == "Spock"
-            choice = "Spock"
-            break
-          elsif choice == "Scissors"
-            break
-          end
-          # update choice == "P"
-      elsif choice.start_with?("p")
+      elsif choice.downcase == "s"
+        prompt("Please choose Spock or Scissors:")
+        s_choice = gets.chomp.downcase
+        # update s_choice to loop
+        if s_choice == "spock"
+          choice = "Spock"
+          break
+        elsif s_choice == "scissors"
+          choice = "Scissors"
+          break
+        else
+          prompt("That is not a valid choice. Please choose Spock or Scissors")
+        end
+
+      elsif choice.downcase == "p"
         choice = "Paper"
         break
-      elsif choice.start_with?("l")
+      elsif choice.downcase == "l"
         choice = "Lizard"
         break
-      elsif choice.start_with?("r")
+      elsif choice.downcase == "r"
         choice = "Rock"
         break
       else
@@ -60,18 +64,27 @@ loop do
 
     if win?(choice, computer_choice)
       prompt("You won!")
-      player_score << 1
+      player_score += 1
     elsif win?(computer_choice, choice)
       prompt("Computer won.")
-      computer_score << 1
+      computer_score += 1
     else
       prompt("It's a tie")
     end
 
-    prompt("The score is => Computer: #{computer_score.sum}, Player: #{player_score.sum}")
-    break if computer_score == 5 || player_score == 5
+    prompt("The score is => Computer: #{computer_score}, Player: #{player_score}")
+
+    if computer_score == 5
+      prompt("The computer won with a score of #{computer_score}-#{player_score}")
+      break
+    elsif player_score == 5
+      prompt("The player won with a score of #{player_score}-#{computer_score}")
+      break
+    end
   end
 
+  computer_score = 0
+  player_score = 0
   prompt("Do you want to play again? Y or N")
   answer = gets.chomp.downcase
   break unless answer.downcase.end_with?("y")
