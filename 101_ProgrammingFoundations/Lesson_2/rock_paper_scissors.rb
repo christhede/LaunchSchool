@@ -1,6 +1,7 @@
+
 VALID_CHOICES = %w(Rock Paper Scissors Lizard Spock)
 
-WINS = { "Scissors": ["Paper", "Lizard"],
+DEFEATS = { "Scissors": ["Paper", "Lizard"],
          "Paper": ["Rock", "Spock"],
          "Rock": ["Lizard", "Paper"],
          "Spock": ["Scissors", "Rock"],
@@ -16,11 +17,7 @@ def prompt(message)
 end
 
 def win?(first, second)
-  (first == "Rock" && second == WINS[:Rock]) ||
-    (first == "Paper" && second == WINS[:Paper]) ||
-    (first == "Scissors" && second == WINS[:Scissors]) ||
-    (first == "Lizard" && second == WINS[:Lizard]) ||
-    (first == "Spock" && second == WINS[:Spock])
+  VALID_CHOICES.include?(first) && DEFEATS[first.intern].include?(second)
 end
 
 loop do
