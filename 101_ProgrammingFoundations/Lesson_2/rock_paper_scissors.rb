@@ -2,10 +2,10 @@
 VALID_CHOICES = %w(Rock Paper Scissors Lizard Spock)
 
 DEFEATS = { "Scissors": ["Paper", "Lizard"],
-         "Paper": ["Rock", "Spock"],
-         "Rock": ["Lizard", "Paper"],
-         "Spock": ["Scissors", "Rock"],
-         "Lizard": ["Spock", "Paper"] }
+            "Paper": ["Rock", "Spock"],
+            "Rock": ["Lizard", "Paper"],
+            "Spock": ["Scissors", "Rock"],
+            "Lizard": ["Spock", "Paper"] }
 
 computer_score = 0
 player_score = 0
