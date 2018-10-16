@@ -17,7 +17,7 @@ def prompt(message)
 end
 
 def win?(first, second)
-  VALID_CHOICES.include?(first) && DEFEATS[first.intern].include?(second)
+  DEFEATS[first.intern].include?(second)
 end
 
 loop do
