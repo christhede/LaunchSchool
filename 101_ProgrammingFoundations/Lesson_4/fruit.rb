@@ -6,25 +6,25 @@ produce = {
 }
 
 def select_fruit(produce_list)
-  produce_keys = produce_list.keys
-  counter = 0
-  selected_fruits = {}
+	produce_keys = produce_list.keys # calling all of the keys
+	selected_fruits = {} # empty hash
+	counter = 0 # counter at 0
 
-  loop do
-    # this has to be at the top in case produce_list is empty hash
-    break if counter == produce_keys.size
+	loop do
 
-    current_key = produce_keys[counter]
-    current_value = produce_list[current_key]
+		break if counter == produce_list.size
 
-    if current_value == 'Fruit'
-      selected_fruits[current_key] = current_value
-    end
+		current_key = produce_keys[counter] # current_key = the first key in produce_keys
+		current_value = produce_list[current_key] # current_value = the value from current_key
 
-    counter += 1
-  end
-
-  puts selected_fruits
+		if current_value == 'Fruit'
+			selected_fruits[current_key] = current_value
+		end
+		
+		counter += 1
+	end
+	puts selected_fruits
 end
 
 select_fruit(produce)
+
