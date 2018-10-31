@@ -1,20 +1,18 @@
-def select_letter(sentance, character)
-  selected_chars = ''
+def multiply(numbers, selection_criteria)
+  doubled_numbers = []
   counter = 0
 
-  loop do 
-    break if counter == sentance.size
+  loop do
+    break if counter == numbers.size
 
-    current_char = sentance[counter]
-
-    if current_char == character
-      selected_chars << current_char
-    end
+    current_number = numbers[counter]
+    doubled_numbers << current_number * selection_criteria
 
     counter += 1
   end
-  selected_chars
+
+  p doubled_numbers
 end
 
-question = "boobies are the best boi"
-p select_letter(question, 'b')
+my_numbers = [1, 4, 3, 7, 2, 6]
+multiply(my_numbers, 3)
