@@ -11,3 +11,4 @@ hsh1 = {'a' => ['d', 'e'], 'b' => ['f', 'g'], 'c' => ['h', 'i']}
 # => hsh1['b'][1]
 
 hsh2 = {first: {'d' => 3}, second: {'e' => 2, 'f' => 1}, third: {'g' => 0}}
+# => hsh2[:third].keys
