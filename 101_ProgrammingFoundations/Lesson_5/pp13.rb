@@ -1,9 +1,7 @@
 arr = [[1, 6, 7], [1, 4, 9], [1, 8, 3]]
 
-arr.each do |sub_array|
+arr.sort_by do |sub_array|
   sub_array.select do |x|
-    x.odd?
-  end
+  x.odd?
 end
-
-
+end

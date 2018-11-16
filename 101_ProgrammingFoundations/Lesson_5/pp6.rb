@@ -1,8 +1,11 @@
-hsh = {first: ['the', 'quick'], second: ['brown', 'fox'], third: ['jumped'], fourth: ['over', 'the', 'lazy', 'dog']}
+munsters = {
+  "Herman" => { "age" => 32, "gender" => "male" },
+  "Lily" => { "age" => 30, "gender" => "female" },
+  "Grandpa" => { "age" => 402, "gender" => "male" },
+  "Eddie" => { "age" => 10, "gender" => "male" },
+  "Marilyn" => { "age" => 23, "gender" => "female"}
+}
 
-
-vowels = 'a', 'e', 'i', 'o', 'u'
-
-hsh.each do |place, details|
-  puts details.chars
+munsters.each do |name, details|
+  puts "#{name} is #{details['age']}-year-old #{details['gender']}"
 end

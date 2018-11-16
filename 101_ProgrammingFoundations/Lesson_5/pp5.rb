@@ -7,11 +7,8 @@ munsters = {
 }
 
 total_age = 0
-
-munsters.each do |name|
-  name.map do |key, value|
-  total_age += key["age"] if key["gender"] == "male"
-  end
+munsters.each do |name, details|
+  total_age += details['age'] if details['gender'] == 'male'
 end
 
 puts total_age
