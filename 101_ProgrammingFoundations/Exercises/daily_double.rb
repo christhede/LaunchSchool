@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #def crunch(text)
 #  crunch_text = ""
 #  index = 0
@@ -23,3 +24,14 @@ crunch('ddaaiillyy ddoouubbllee') == 'daily double'
 # crunch('a') == 'a'
 # crunch('') == ''
 
+=======
+
+
+
+
+crunch('ddaaiillyy ddoouubbllee') == 'daily double'
+crunch('4444abcabccba') == '4abcabcba'
+crunch('ggggggggggggggg') == 'g'
+crunch('a') == 'a'
+crunch('') == ''
+>>>>>>> 9cf2e92b3cce5e6991de884b50b9c06d94fe8a84
