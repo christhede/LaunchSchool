@@ -53,10 +53,10 @@ def player_places_piece!(brd)
   brd[square] = PLAYER_MARKER
 end
 
-def computer_places_piece!(brd)
-  square = empty_squares(brd).sample
-  brd[square] = COMPUTER_MARKER
-end
+# def computer_places_piece!(brd)
+#   square = empty_squares(brd).sample
+#   brd[square] = COMPUTER_MARKER
+# end
 
 def board_full?(brd)
   empty_squares(brd).empty?
@@ -75,6 +75,25 @@ def detect_winner(brd)
     end
   end
   nil
+end
+
+def computer_places_piece_defense!(brd)
+  WINNING_LINES.each do |line|
+    if brd.values_at(*line).count(PLAYER_MARKER) == 2
+      brd.values_at(*line).map do |x|
+       binding.pry
+        if x == INITIAL_MARKER
+          brd[x] = COMPUTER_MARKER
+          binding.pry
+        end
+      end
+    # else
+    #   square = empty_squares(brd).sample
+    #   brd[square] = COMPUTER_MARKER
+    #   binding.pry
+    #   break
+    end
+  end
 end
 
 def joinor(num, punc = ', ', op = 'or ')
@@ -120,6 +139,7 @@ loop do
   loop do
     $board = initialize_board
     loop do
+      # defense($board)
       header
 
       player_places_piece!($board)
@@ -128,7 +148,7 @@ loop do
       header
       sleep(1)
 
-      computer_places_piece!($board)
+      computer_places_piece_defense!($board)
       break if someone_won?($board) || board_full?($board)
     end
 
@@ -136,7 +156,8 @@ loop do
 
     if someone_won?($board)
       prompt "#{detect_winner($board)} won!"
-       if "#{detect_winner($board)}" == 'Player'
+       if "5
+        #{detect_winner($board)}" == 'Player'
          $player_score += 1
        elsif "#{detect_winner($board)}" == 'Computer'
          $computer_score += 1
@@ -149,7 +170,7 @@ loop do
 
     new_game_pause
   end
-  # binding.pry
+
   prompt "The #{detect_winner($board)} won the match! #{$player_score}-#{$computer_score}"
   prompt 'Do you want to play again? (Y or N)'
   answer = gets.chomp
