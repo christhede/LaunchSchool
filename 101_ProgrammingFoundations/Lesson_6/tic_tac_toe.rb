@@ -80,18 +80,28 @@ end
 def computer_places_piece_defense!(brd)
   WINNING_LINES.each do |line|
     if brd.values_at(*line).count(PLAYER_MARKER) == 2 &&
-       brd.values_at(*line).include?(INITIAL_MARKER)
-       # brd = COMPUTER_MARKER
+       brd.values_at(*line).include?(INITIAL_MARKER) == true
+       square = line.select {|x| brd[line[x]] == INITIAL_MARKER}.pop
+       brd[line[square]] = COMPUTER_MARKER
        binding.pry
-      #   end
-      # end
-    # else
-    #   square = empty_squares(brd).sample
-    #   brd[square] = COMPUTER_MARKER
-    #   binding.pry
-    #   break
+       break
+     elsif 
     end
+    nil
   end
+end
+
+def player_has_two_squares(brd)
+  WINNING_LINES.each do |line|
+    break if brd.values_at(*line).count(PLAYER_MARKER) == 2 &&
+             brd.values_at(*line).include?(INITIAL_MARKER) == true
+  end
+end
+
+def computer_places_piece!(brd)
+  square = empty_squares(brd).sample
+  brd[square] = COMPUTER_MARKER
+  binding.pry
 end
 
 def joinor(num, punc = ', ', op = 'or ')
@@ -154,8 +164,7 @@ loop do
 
     if someone_won?($board)
       prompt "#{detect_winner($board)} won!"
-       if "5
-        #{detect_winner($board)}" == 'Player'
+       if "#{detect_winner($board)}" == 'Player'
          $player_score += 1
        elsif "#{detect_winner($board)}" == 'Computer'
          $computer_score += 1
