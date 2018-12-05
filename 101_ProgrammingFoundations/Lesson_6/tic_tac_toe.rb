@@ -1,7 +1,7 @@
 require 'pry'
 
-$player_score = 0
-$computer_score = 0
+@player_score = 0
+@computer_score = 0
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
                 [[1, 5, 9], [3, 5, 7]].freeze # diagonals
@@ -44,7 +44,7 @@ end
 def player_places_piece!(brd)
   square = ''
   loop do
-    prompt "Choose a square (#{joinor(empty_squares(brd))}):"
+    prompt "Choose a square: #{joinor(empty_squares(brd))}"
     square = gets.chomp.to_i
     break if empty_squares(brd).include?(square)
     prompt "Sorry, that's not a valid choice"
@@ -53,10 +53,13 @@ def player_places_piece!(brd)
   brd[square] = PLAYER_MARKER
 end
 
-# def computer_places_piece!(brd)
-#   square = empty_squares(brd).sample
-#   brd[square] = COMPUTER_MARKER
-# end
+def joinor(num, punc = ', ', op = 'or ')
+  if num.count <= 2
+    num.join(" #{op}")
+  else
+    num.join(punc.to_s).insert(-2, op)
+  end
+end
 
 def board_full?(brd)
   empty_squares(brd).empty?
@@ -77,38 +80,38 @@ def detect_winner(brd)
   nil
 end
 
-def computer_places_piece_defense!(brd)
-  WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 2 &&
-       brd.values_at(*line).include?(INITIAL_MARKER) == true
-       square = line.select {|x| brd[line[x]] == INITIAL_MARKER}.pop
-       brd[line[square]] = COMPUTER_MARKER
-       binding.pry
-       break
-     elsif 
-    end
-    nil
-  end
-end
-
-def player_has_two_squares(brd)
-  WINNING_LINES.each do |line|
-    break if brd.values_at(*line).count(PLAYER_MARKER) == 2 &&
-             brd.values_at(*line).include?(INITIAL_MARKER) == true
-  end
-end
-
 def computer_places_piece!(brd)
-  square = empty_squares(brd).sample
+  square = nil
+  WINNING_LINES.each do |line|
+    square = find_at_risk_square(line, brd, COMPUTER_MARKER)
+    break if square
+  end
+
+  if !square
+    WINNING_LINES.each do |line|
+      square = find_at_risk_square(line, brd, PLAYER_MARKER)
+      break if square
+    end
+  end
+
+  if !square
+    if brd[5] == INITIAL_MARKER
+      square = 5
+    end
+  end
+
+  if !square
+    square = empty_squares(brd).sample
+  end
+
   brd[square] = COMPUTER_MARKER
-  binding.pry
 end
 
-def joinor(num, punc = ', ', op = 'or ')
-  if num.count <= 2
-    puts num.join(" #{op}")
+def find_at_risk_square(line, board, marker)
+  if board.values_at(*line).count(marker) == 2
+    board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   else
-    puts num.join(punc.to_s).insert(-2, op)
+    nil
   end
 end
 
@@ -123,7 +126,7 @@ def whose_winning?(num1, num2)
 end
 
 def new_game_pause
-  puts "New game starting"
+  puts 'New game starting'
   sleep(0.75)
   puts '.'
   sleep(0.75)
@@ -137,51 +140,98 @@ def header
   system 'clear'
   prompt "You're a #{PLAYER_MARKER}. The computer is #{COMPUTER_MARKER}"
   prompt 'First one to 5 wins the match'
-  if $player_score > 0 || $computer_score > 0
-    prompt "#{whose_winning?($player_score, $computer_score)}"
+  if @player_score > 0 || @computer_score > 0
+    prompt whose_winning?(@player_score, @computer_score)
   end
-  display_board($board)
+  display_board(@board)
+end
+
+def player_plays_first
+  loop do
+    header
+    sleep(1)
+
+    player_places_piece!(@board)
+    break if someone_won?(@board) || board_full?(@board)
+
+    header
+    sleep(1)
+
+    computer_places_piece!(@board)
+    break if someone_won?(@board) || board_full?(@board)
+  end
+end
+
+def computer_plays_first
+  loop do
+    header
+    sleep(1)
+
+    computer_places_piece!(@board)
+    break if someone_won?(@board) || board_full?(@board)
+
+    header
+    sleep(1)
+
+    player_places_piece!(@board)
+    break if someone_won?(@board) || board_full?(@board)
+  end
+end
+
+def gameplay
+  array = [1, 2]
+  loop do
+    prompt 'Who should go first?'
+    prompt "Please choose one: 'Player', 'Computer' or 'Random'"
+    answer = gets.chomp
+    if answer.downcase.start_with?('r')
+      num = array.sample
+      answer = num == 1 ? 'player' : 'computer'
+    end
+
+    if answer.downcase.start_with?('p')
+      player_plays_first
+      break
+    elsif answer.downcase.start_with?('c')
+      computer_plays_first
+      break
+    else
+      prompt 'That is not a valid answer'
+      sleep(1)
+    end
+  end
 end
 
 loop do
   loop do
-    $board = initialize_board
-    loop do
-      # defense($board)
-      header
+    @board = initialize_board
 
-      player_places_piece!($board)
-      break if someone_won?($board) || board_full?($board)
+    system 'clear'
 
-      header
-      sleep(1)
-
-      computer_places_piece_defense!($board)
-      break if someone_won?($board) || board_full?($board)
-    end
+    gameplay
 
     header
 
-    if someone_won?($board)
-      prompt "#{detect_winner($board)} won!"
-       if "#{detect_winner($board)}" == 'Player'
-         $player_score += 1
-       elsif "#{detect_winner($board)}" == 'Computer'
-         $computer_score += 1
+    if someone_won?(@board)
+      prompt "#{detect_winner(@board)} won!"
+       if detect_winner(@board) == 'Player'
+         @player_score += 1
+       elsif detect_winner(@board) == 'Computer'
+         @computer_score += 1
        end
-      break if $player_score == 2 || $computer_score == 2
-      prompt "#{whose_winning?($player_score, $computer_score)}"
+      break if @player_score == 5 || @computer_score == 5
+      prompt whose_winning?(@player_score, @computer_score)
     else
-      prompt "It's a tie #{$player_score}-#{$computer_score}"
+      prompt "It's a tie #{@player_score}-#{@computer_score}"
     end
 
     new_game_pause
   end
 
-  prompt "The #{detect_winner($board)} won the match! #{$player_score}-#{$computer_score}"
+  prompt "The #{detect_winner(@board)} won the match! #{@player_score}-#{@computer_score}"
   prompt 'Do you want to play again? (Y or N)'
   answer = gets.chomp
   break unless answer.downcase.start_with?('y')
 end
 
-prompt 'Thanks for playing Tic Tac Toe. Goodbye'
+prompt 'Thanks for playing Tic Tac Toe! Catch ya later.'
