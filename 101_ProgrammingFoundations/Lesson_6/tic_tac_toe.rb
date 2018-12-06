@@ -123,6 +123,15 @@ def whose_winning?(num1, num2)
   end
 end
 
+def game_score
+  if @player_score >= @computer_score
+  "#{@player_score}-#{@computer_score}"
+  else 
+  "#{@computer_score}-#{@player_score}"
+  end
+end
+
+
 def new_game_pause
   puts 'New game starting'
   sleep(0.75)
@@ -145,15 +154,15 @@ def header
 end
 
 def alternate_player(player)
-  if player == 'computer'
-    'player'
+  if player == 'Computer'
+    'Player'
   else 
-    'computer'
+    'Computer'
   end
 end
 
 def place_piece!(brd, player)
-  if player == 'computer'
+  if player == 'Computer'
     header
     sleep(1)
     computer_places_piece!(@board)
@@ -164,47 +173,45 @@ def place_piece!(brd, player)
   end
 end
 
-def gameplay
-  array = [1, 2]
-  loop do
-    loop do
-      prompt 'Who should go first?'
-      prompt "Please choose one: 'Player', 'Computer' or 'Random'"
-      answer = gets.chomp
-
-      if answer.downcase.start_with?('r')
-        num = array.sample
-        answer = num == 1 ? 'player' : 'computer'
-      end
-
-      if answer.downcase.start_with?('p')
-        @current_player = 'player'
-        break
-      elsif answer.downcase.start_with?('c')
-        @current_player = 'computer'
-        break
-      else
-        prompt 'That is not a valid answer'
-        sleep(1)
-      end
-    end
-    loop do 
-      display_board(@board)
-      place_piece!(@board, @current_player)
-      @current_player = alternate_player(@current_player)
-      break if someone_won?(@board) || board_full?(@board)
-    end
-    break if someone_won?(@board) || board_full?(@board)
-  end
-end
-
 loop do
   loop do
+  system 'clear'
+  prompt 'Who should go first?'
+  prompt "Please choose one: 'Player', 'Computer' or 'Random'"
+  answer = gets.chomp
+    if answer.downcase.start_with?('r')
+      num = array.sample
+      answer = num == 1 ? 'Player' : 'Computer'
+    end
+
+    if answer.downcase.start_with?('p')
+      @current_player = 'Player'
+      break
+    elsif answer.downcase.start_with?('c')
+      @current_player = 'Computer'
+      break
+    else
+      prompt 'That is not a valid answer'
+      sleep(1)
+    end
+  end
+  winner = []
+  loop do
+
     @board = initialize_board
+    display_board(@board)
+    @current_player = winner.pop
+    binding.pry
 
-    system 'clear'
-
-    gameplay
+    array = [1, 2]
+    loop do
+      loop do 
+        place_piece!(@board, @current_player)
+        @current_player = alternate_player(@current_player)
+        break if someone_won?(@board) || board_full?(@board)
+      end
+      break if someone_won?(@board) || board_full?(@board)
+    end
 
     header
 
@@ -218,13 +225,14 @@ loop do
       break if @player_score == 5 || @computer_score == 5
       prompt whose_winning?(@player_score, @computer_score)
     else
-      prompt "It's a tie #{@player_score}-#{@computer_score}"
+      prompt "It's a tie #{game_score}"
     end
-
     new_game_pause
+    winner << detect_winner(@board)
+    binding.pry
   end
 
-  prompt "The #{detect_winner(@board)} won the match! #{@player_score}-#{@computer_score}"
+  prompt "The #{detect_winner(@board)} won the match! #{game_score}"
   prompt 'Do you want to play again? (Y or N)'
   answer = gets.chomp
   break unless answer.downcase.start_with?('y')
