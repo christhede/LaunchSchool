@@ -110,8 +110,6 @@ end
 def find_at_risk_square(line, board, marker)
   if board.values_at(*line).count(marker) == 2
     board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
-  else
-    nil
   end
 end
 
@@ -146,59 +144,57 @@ def header
   display_board(@board)
 end
 
-def player_plays_first
-  loop do
-    header
-    sleep(1)
-
-    player_places_piece!(@board)
-    break if someone_won?(@board) || board_full?(@board)
-
-    header
-    sleep(1)
-
-    computer_places_piece!(@board)
-    break if someone_won?(@board) || board_full?(@board)
+def alternate_player(player)
+  if player == 'computer'
+    'player'
+  else 
+    'computer'
   end
 end
 
-def computer_plays_first
-  loop do
+def place_piece!(brd, player)
+  if player == 'computer'
     header
     sleep(1)
-
     computer_places_piece!(@board)
-    break if someone_won?(@board) || board_full?(@board)
-
+  else
     header
     sleep(1)
-
     player_places_piece!(@board)
-    break if someone_won?(@board) || board_full?(@board)
   end
 end
 
 def gameplay
   array = [1, 2]
   loop do
-    prompt 'Who should go first?'
-    prompt "Please choose one: 'Player', 'Computer' or 'Random'"
-    answer = gets.chomp
-    if answer.downcase.start_with?('r')
-      num = array.sample
-      answer = num == 1 ? 'player' : 'computer'
-    end
+    loop do
+      prompt 'Who should go first?'
+      prompt "Please choose one: 'Player', 'Computer' or 'Random'"
+      answer = gets.chomp
 
-    if answer.downcase.start_with?('p')
-      player_plays_first
-      break
-    elsif answer.downcase.start_with?('c')
-      computer_plays_first
-      break
-    else
-      prompt 'That is not a valid answer'
-      sleep(1)
+      if answer.downcase.start_with?('r')
+        num = array.sample
+        answer = num == 1 ? 'player' : 'computer'
+      end
+
+      if answer.downcase.start_with?('p')
+        @current_player = 'player'
+        break
+      elsif answer.downcase.start_with?('c')
+        @current_player = 'computer'
+        break
+      else
+        prompt 'That is not a valid answer'
+        sleep(1)
+      end
     end
+    loop do 
+      display_board(@board)
+      place_piece!(@board, @current_player)
+      @current_player = alternate_player(@current_player)
+      break if someone_won?(@board) || board_full?(@board)
+    end
+    break if someone_won?(@board) || board_full?(@board)
   end
 end
 
@@ -214,11 +210,11 @@ loop do
 
     if someone_won?(@board)
       prompt "#{detect_winner(@board)} won!"
-       if detect_winner(@board) == 'Player'
-         @player_score += 1
-       elsif detect_winner(@board) == 'Computer'
-         @computer_score += 1
-       end
+      if detect_winner(@board) == 'Player'
+        @player_score += 1
+      elsif detect_winner(@board) == 'Computer'
+        @computer_score += 1
+      end
       break if @player_score == 5 || @computer_score == 5
       prompt whose_winning?(@player_score, @computer_score)
     else
