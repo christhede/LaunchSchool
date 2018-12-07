@@ -14,6 +14,22 @@ def prompt(msg)
 end
 
 # rubocop:disable Metrics/MethodLength,
+def board_with_numbers
+  puts ''
+  puts '     |     |'
+  puts '  1  |  2  |  3 '
+  puts '     |     |'
+  puts '-----+-----+-----'
+  puts '     |     |'
+  puts '  4  |  5  |  6  '
+  puts '     |     |'
+  puts '-----+-----+------'
+  puts '     |     |'
+  puts '  7  |  8  |  9  '
+  puts '     |     |'
+  puts ''
+end
+
 def display_board(brd)
   puts ''
   puts '     |     |'
@@ -37,20 +53,25 @@ def initialize_board
   new_board
 end
 
+def header
+  system 'clear'
+  prompt "You're an '#{PLAYER_MARKER}'. The computer is an '#{COMPUTER_MARKER}'"
+  prompt 'First one to 5 wins the match'
+  if @player_score > 0 || @computer_score > 0
+    prompt whose_winning?(@player_score, @computer_score)
+    prompt 'The winner plays first'
+  end
+  display_board(@board)
+end
+
 def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
-def player_places_piece!(brd)
-  square = ''
-  loop do
-    prompt "Choose a square: #{joinor(empty_squares(brd))}"
-    square = gets.chomp.to_i
-    break if empty_squares(brd).include?(square)
-    prompt "Sorry, that's not a valid choice"
+def find_at_risk_square(line, board, marker)
+  if board.values_at(*line).count(marker) == 2
+    board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
   end
-
-  brd[square] = PLAYER_MARKER
 end
 
 def joinor(num, punc = ', ', op = 'or ')
@@ -66,7 +87,7 @@ def board_full?(brd)
 end
 
 def someone_won?(brd)
-  !!detect_winner(brd)
+  !detect_winner(brd).nil?
 end
 
 def detect_winner(brd)
@@ -87,30 +108,32 @@ def computer_places_piece!(brd)
     break if square
   end
 
-  if !square
+  unless square
     WINNING_LINES.each do |line|
       square = find_at_risk_square(line, brd, PLAYER_MARKER)
       break if square
     end
   end
 
-  if !square
-    if brd[5] == INITIAL_MARKER
-      square = 5
-    end
+  unless square
+    square = 5 if brd[5] == INITIAL_MARKER
   end
 
-  if !square
-    square = empty_squares(brd).sample
-  end
+  square = empty_squares(brd).sample unless square
 
   brd[square] = COMPUTER_MARKER
 end
 
-def find_at_risk_square(line, board, marker)
-  if board.values_at(*line).count(marker) == 2
-    board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
+def player_places_piece!(brd)
+  square = ''
+  loop do
+    prompt "Choose a square: #{joinor(empty_squares(brd))}"
+    square = gets.chomp.to_i
+    break if empty_squares(brd).include?(square)
+    prompt "Sorry, that's not a valid choice"
   end
+
+  brd[square] = PLAYER_MARKER
 end
 
 def whose_winning?(num1, num2)
@@ -125,12 +148,11 @@ end
 
 def game_score
   if @player_score >= @computer_score
-  "#{@player_score}-#{@computer_score}"
-  else 
-  "#{@computer_score}-#{@player_score}"
+    "#{@player_score}-#{@computer_score}"
+  else
+    "#{@computer_score}-#{@player_score}"
   end
 end
-
 
 def new_game_pause
   puts 'New game starting'
@@ -143,25 +165,15 @@ def new_game_pause
   sleep(0.75)
 end
 
-def header
-  system 'clear'
-  prompt "You're a #{PLAYER_MARKER}. The computer is #{COMPUTER_MARKER}"
-  prompt 'First one to 5 wins the match'
-  if @player_score > 0 || @computer_score > 0
-    prompt whose_winning?(@player_score, @computer_score)
-  end
-  display_board(@board)
-end
-
 def alternate_player(player)
   if player == 'Computer'
     'Player'
-  else 
+  else
     'Computer'
   end
 end
 
-def place_piece!(brd, player)
+def place_piece!(_, player)
   if player == 'Computer'
     header
     sleep(1)
@@ -173,21 +185,23 @@ def place_piece!(brd, player)
   end
 end
 
-loop do
+def initial_gameplay
   loop do
-  system 'clear'
-  prompt 'Who should go first?'
-  prompt "Please choose one: 'Player', 'Computer' or 'Random'"
-  answer = gets.chomp
-    if answer.downcase.start_with?('r')
+    array = %w(Player Computer)
+    system 'clear'
+    prompt 'Who should go first?'
+    prompt "Please type one: 'Player', 'Computer' or 'Random'"
+    @answer = gets.chomp
+
+    if @answer.downcase.start_with?('r')
       num = array.sample
-      answer = num == 1 ? 'Player' : 'Computer'
+      @answer = num == 'Player' ? 'Player' : 'Computer'
     end
 
-    if answer.downcase.start_with?('p')
+    if @answer.downcase.start_with?('p')
       @current_player = 'Player'
       break
-    elsif answer.downcase.start_with?('c')
+    elsif @answer.downcase.start_with?('c')
       @current_player = 'Computer'
       break
     else
@@ -195,21 +209,18 @@ loop do
       sleep(1)
     end
   end
-  winner = []
-  loop do
+end
 
+loop do
+  initial_gameplay
+
+  loop do
     @board = initialize_board
     display_board(@board)
-    @current_player = winner.pop
-    binding.pry
 
-    array = [1, 2]
     loop do
-      loop do 
-        place_piece!(@board, @current_player)
-        @current_player = alternate_player(@current_player)
-        break if someone_won?(@board) || board_full?(@board)
-      end
+      place_piece!(@board, @current_player)
+      @current_player = alternate_player(@current_player)
       break if someone_won?(@board) || board_full?(@board)
     end
 
@@ -219,20 +230,22 @@ loop do
       prompt "#{detect_winner(@board)} won!"
       if detect_winner(@board) == 'Player'
         @player_score += 1
+        @current_player = 'Player'
       elsif detect_winner(@board) == 'Computer'
         @computer_score += 1
+        @current_player = 'Computer'
       end
       break if @player_score == 5 || @computer_score == 5
       prompt whose_winning?(@player_score, @computer_score)
     else
-      prompt "It's a tie #{game_score}"
+      prompt "It's a tie."
     end
     new_game_pause
-    winner << detect_winner(@board)
-    binding.pry
   end
 
   prompt "The #{detect_winner(@board)} won the match! #{game_score}"
+  @player_score = 0
+  @computer_score = 0
   prompt 'Do you want to play again? (Y or N)'
   answer = gets.chomp
   break unless answer.downcase.start_with?('y')
