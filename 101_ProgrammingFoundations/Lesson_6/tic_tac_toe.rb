@@ -1,4 +1,7 @@
-require 'pry'
+# rubocop:disable Metrics/AbcSize,
+# rubocop:disable Metrics/MethodLength,
+# rubocop:disable Metrics/BlockLength,
+# rubocop:disable Metrics/CyclomaticComplexity
 
 @player_score = 0
 @computer_score = 0
@@ -13,7 +16,6 @@ def prompt(msg)
   puts "=> #{msg}"
 end
 
-# rubocop:disable Metrics/MethodLength,
 def board_with_numbers
   puts ''
   puts '     |     |'
@@ -45,7 +47,6 @@ def display_board(brd)
   puts '     |     |'
   puts ''
 end
-# rubocop:enable Metrics/Length
 
 def initialize_board
   new_board = {}
@@ -68,11 +69,11 @@ def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
+# rubocop: disable Metrics/LineLength
 def find_at_risk_square(line, board, marker)
-  if board.values_at(*line).count(marker) == 2
-    board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
-  end
+  board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first if board.values_at(*line).count(marker) == 2
 end
+# rubocop: enable Metrics/LineLength
 
 def joinor(num, punc = ', ', op = 'or ')
   if num.count <= 2
@@ -92,11 +93,8 @@ end
 
 def detect_winner(brd)
   WINNING_LINES.each do |line|
-    if brd.values_at(*line).count(PLAYER_MARKER) == 3
-      return 'Player'
-    elsif brd.values_at(*line).count(COMPUTER_MARKER) == 3
-      return 'Computer'
-    end
+    return 'Player' if brd.values_at(*line).count(PLAYER_MARKER) == 3
+    return 'Computer' if brd.values_at(*line).count(COMPUTER_MARKER) == 3
   end
   nil
 end
@@ -127,8 +125,12 @@ end
 def player_places_piece!(brd)
   square = ''
   loop do
-    prompt "Choose a square: #{joinor(empty_squares(brd))}"
-    square = gets.chomp.to_i
+    if empty_squares(brd).count == 1
+      square = empty_squares(brd).pop
+    else
+      prompt "Choose a square and hit enter: #{joinor(empty_squares(brd))}"
+      square = gets.chomp.to_i
+    end
     break if empty_squares(brd).include?(square)
     prompt "Sorry, that's not a valid choice"
   end
@@ -189,8 +191,10 @@ def initial_gameplay
   loop do
     array = %w(Player Computer)
     system 'clear'
+    prompt 'This is how the board numbering works.'
+    board_with_numbers
     prompt 'Who should go first?'
-    prompt "Please type one: 'Player', 'Computer' or 'Random'"
+    prompt "Please choose one and hit enter: 'Player', 'Computer' or 'Random'"
     @answer = gets.chomp
 
     if @answer.downcase.start_with?('r')
@@ -211,7 +215,6 @@ def initial_gameplay
   end
 end
 
-# rubocop:disable Metrics/BlockLength
 loop do
   initial_gameplay
 
@@ -251,6 +254,10 @@ loop do
   answer = gets.chomp
   break unless answer.downcase.start_with?('y')
 end
+
 # rubocop:enable Metrics/BlockLength
+# rubocop:enable Metrics/AbcSize
+# rubocop:enable Metrics/MethodLength
+# rubocop:enable Metrics/CyclomaticComplexity
 
 prompt 'Thanks for playing Tic Tac Toe! Catch ya later.'
