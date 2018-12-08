@@ -211,6 +211,7 @@ def initial_gameplay
   end
 end
 
+# rubocop:disable Metrics/BlockLength
 loop do
   initial_gameplay
 
@@ -250,5 +251,6 @@ loop do
   answer = gets.chomp
   break unless answer.downcase.start_with?('y')
 end
+# rubocop:enable Metrics/BlockLength
 
 prompt 'Thanks for playing Tic Tac Toe! Catch ya later.'
