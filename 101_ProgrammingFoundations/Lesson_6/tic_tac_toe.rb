@@ -191,7 +191,7 @@ def initial_gameplay
   loop do
     array = %w(Player Computer)
     system 'clear'
-    prompt 'This is how the board numbering works.'
+    prompt 'This is how the board numbering works:'
     board_with_numbers
     prompt 'Who should go first?'
     prompt "Please choose one and hit enter: 'Player', 'Computer' or 'Random'"
