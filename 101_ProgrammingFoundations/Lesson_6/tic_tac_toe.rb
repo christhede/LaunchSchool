@@ -250,9 +250,13 @@ loop do
   prompt "The #{detect_winner(@board)} won the match! #{game_score}"
   @player_score = 0
   @computer_score = 0
-  prompt 'Do you want to play again? (Y or N)'
-  answer = gets.chomp
-  break unless answer.downcase.start_with?('y')
+  loop do
+    prompt 'Do you want to play again? (Y or N)'
+    @last_answer = gets.chomp
+    break if @last_answer.downcase.start_with?('y') || @last_answer.downcase.start_with?('n')
+    prompt "That's not a valid answer"
+  end
+  break if @last_answer.downcase.start_with?("n")
 end
 
 # rubocop:enable Metrics/BlockLength
