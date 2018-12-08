@@ -253,10 +253,10 @@ loop do
   loop do
     prompt 'Do you want to play again? (Y or N)'
     @last_answer = gets.chomp
-    break if @last_answer.downcase.start_with?('y') || @last_answer.downcase.start_with?('n')
+    break if @last_answer.downcase.start_with?('y', 'n')
     prompt "That's not a valid answer"
   end
-  break if @last_answer.downcase.start_with?("n")
+  break if @last_answer.downcase.start_with?('n')
 end
 
 # rubocop:enable Metrics/BlockLength
