@@ -1,13 +1,11 @@
-# rubocop:disable Metrics/AbcSize,
-# rubocop:disable Metrics/MethodLength,
-# rubocop:disable Metrics/BlockLength,
-# rubocop:disable Metrics/CyclomaticComplexity
-
+@random_player = %w(Player Computer)
+@winning_score = 5
 @player_score = 0
 @computer_score = 0
-WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
-                [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
-                [[1, 5, 9], [3, 5, 7]].freeze # diagonals
+
+WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
+                [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
+                [[1, 5, 9], [3, 5, 7]].freeze
 INITIAL_MARKER = ' '.freeze
 PLAYER_MARKER = 'X'.freeze
 COMPUTER_MARKER = 'O'.freeze
@@ -16,6 +14,8 @@ def prompt(msg)
   puts "=> #{msg}"
 end
 
+# rubocop: disable Metrics/MethodLength
+# rubocop: disable Metrics/AbcSize
 def board_with_numbers
   puts ''
   puts '     |     |'
@@ -47,6 +47,8 @@ def display_board(brd)
   puts '     |     |'
   puts ''
 end
+# rubocop: enable Metrics/Metrics/AbcSize
+# rubocop: enable Metrics/MethodLength
 
 def initialize_board
   new_board = {}
@@ -55,11 +57,11 @@ def initialize_board
 end
 
 def header
-  system 'clear'
+  system('clear')
   prompt "You're an '#{PLAYER_MARKER}'. The computer is an '#{COMPUTER_MARKER}'"
   prompt 'First one to 5 wins the match'
   if @player_score > 0 || @computer_score > 0
-    prompt whose_winning?(@player_score, @computer_score)
+    prompt who_is_winning(@player_score, @computer_score)
     prompt 'The winner plays first'
   end
   display_board(@board)
@@ -99,46 +101,60 @@ def detect_winner(brd)
   nil
 end
 
-def computer_places_piece!(brd)
-  square = nil
+def computers_offense(brd)
   WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, brd, COMPUTER_MARKER)
-    break if square
+    @square = find_at_risk_square(line, brd, COMPUTER_MARKER)
+    break if @square
+  end
+  @square
+end
+
+def computers_defense(brd)
+  WINNING_LINES.each do |line|
+    @square = find_at_risk_square(line, brd, PLAYER_MARKER)
+    break if @square
+  end
+  @square
+end
+
+def computer_places_piece!(brd)
+  @square = nil
+
+  computers_offense(brd)
+
+  computers_defense(brd) unless @square
+
+  unless @square
+    @square = @winning_score if brd[@winning_score] == INITIAL_MARKER
   end
 
-  unless square
-    WINNING_LINES.each do |line|
-      square = find_at_risk_square(line, brd, PLAYER_MARKER)
-      break if square
-    end
+  @square = empty_squares(brd).sample unless @square
+
+  brd[@square] = COMPUTER_MARKER
+end
+
+def player_chooses_square(brd)
+  if empty_squares(brd).count == 1
+    @player_square = empty_squares(brd).pop
+  else
+    prompt "Choose a square and hit enter: #{joinor(empty_squares(brd))}"
+    @player_square = gets.chomp.to_i
   end
-
-  unless square
-    square = 5 if brd[5] == INITIAL_MARKER
-  end
-
-  square = empty_squares(brd).sample unless square
-
-  brd[square] = COMPUTER_MARKER
 end
 
 def player_places_piece!(brd)
-  square = ''
+  @player_square = ''
+
   loop do
-    if empty_squares(brd).count == 1
-      square = empty_squares(brd).pop
-    else
-      prompt "Choose a square and hit enter: #{joinor(empty_squares(brd))}"
-      square = gets.chomp.to_i
-    end
-    break if empty_squares(brd).include?(square)
+    player_chooses_square(brd)
+    break if empty_squares(brd).include?(@player_square)
     prompt "Sorry, that's not a valid choice"
   end
 
-  brd[square] = PLAYER_MARKER
+  brd[@player_square] = PLAYER_MARKER
 end
 
-def whose_winning?(num1, num2)
+def who_is_winning(num1, num2)
   if num1 > num2
     "The player is winning #{num1}-#{num2}"
   elsif num2 > num1
@@ -187,31 +203,55 @@ def place_piece!(_, player)
   end
 end
 
+def initial_gameplay_header
+  system('clear')
+  prompt 'This is how the board numbering works:'
+  board_with_numbers
+  prompt 'Who should go first?'
+  prompt "Please choose one and hit enter: 'Player', 'Computer' or 'Random'"
+end
+
+def current_player
+  @current_player = if @answer.casecmp?('player')
+                      'Player'
+                    else
+                      'Computer'
+                    end
+end
+
 def initial_gameplay
   loop do
-    array = %w(Player Computer)
-    system 'clear'
-    prompt 'This is how the board numbering works:'
-    board_with_numbers
-    prompt 'Who should go first?'
-    prompt "Please choose one and hit enter: 'Player', 'Computer' or 'Random'"
+    initial_gameplay_header
     @answer = gets.chomp
+    break @current_player = @random_player.sample if @answer.casecmp?('random')
+    current_player
+    break if @answer.casecmp?('player') || @answer.casecmp?('computer')
+    prompt 'That is not a valid answer'
+    sleep(1)
+  end
+end
 
-    if @answer.downcase.start_with?('r')
-      num = array.sample
-      @answer = num == 'Player' ? 'Player' : 'Computer'
-    end
+def adding_player_score
+  if detect_winner(@board) == 'Player'
+    @player_score += 1
+    @current_player = 'Player'
+  elsif detect_winner(@board) == 'Computer'
+    @computer_score += 1
+    @current_player = 'Computer'
+  end
+end
 
-    if @answer.downcase.start_with?('p')
-      @current_player = 'Player'
-      break
-    elsif @answer.downcase.start_with?('c')
-      @current_player = 'Computer'
-      break
-    else
-      prompt 'That is not a valid answer'
-      sleep(1)
-    end
+def reset_game_score
+  @player_score = 0
+  @computer_score = 0
+end
+
+def end_of_gameplay
+  loop do
+    prompt 'Do you want to play again? (Y or N)'
+    @last_answer = gets.chomp
+    break if @last_answer.casecmp?('y') || @last_answer.casecmp?('n')
+    prompt "That's not a valid answer"
   end
 end
 
@@ -232,15 +272,12 @@ loop do
 
     if someone_won?(@board)
       prompt "#{detect_winner(@board)} won!"
-      if detect_winner(@board) == 'Player'
-        @player_score += 1
-        @current_player = 'Player'
-      elsif detect_winner(@board) == 'Computer'
-        @computer_score += 1
-        @current_player = 'Computer'
-      end
-      break if @player_score == 5 || @computer_score == 5
-      prompt whose_winning?(@player_score, @computer_score)
+
+      adding_player_score
+      # rubocop: disable Metrics/LineLength
+      break if @player_score == @winning_score || @computer_score == @winning_score
+      # rubocop: enable Metrics/LineLength
+      prompt who_is_winning(@player_score, @computer_score)
     else
       prompt "It's a tie."
     end
@@ -248,20 +285,12 @@ loop do
   end
 
   prompt "The #{detect_winner(@board)} won the match! #{game_score}"
-  @player_score = 0
-  @computer_score = 0
-  loop do
-    prompt 'Do you want to play again? (Y or N)'
-    @last_answer = gets.chomp
-    break if @last_answer.downcase.start_with?('y', 'n')
-    prompt "That's not a valid answer"
-  end
-  break if @last_answer.downcase.start_with?('n')
-end
 
-# rubocop:enable Metrics/BlockLength
-# rubocop:enable Metrics/AbcSize
-# rubocop:enable Metrics/MethodLength
-# rubocop:enable Metrics/CyclomaticComplexity
+  reset_game_score
+
+  end_of_gameplay
+
+  break if @last_answer.casecmp?('n')
+end
 
 prompt 'Thanks for playing Tic Tac Toe! Catch ya later.'
