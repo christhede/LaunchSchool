@@ -1,4 +1,4 @@
-@random_player = %w(Player Computer)
+@random_player = %w[Player Computer]
 @winning_score = 5
 @player_score = 0
 @computer_score = 0
@@ -14,7 +14,6 @@ def prompt(msg)
   puts "=> #{msg}"
 end
 
-# rubocop: disable Metrics/MethodLength
 # rubocop: disable Metrics/AbcSize
 def board_with_numbers
   puts ''
@@ -48,7 +47,6 @@ def display_board(brd)
   puts ''
 end
 # rubocop: enable Metrics/Metrics/AbcSize
-# rubocop: enable Metrics/MethodLength
 
 def initialize_board
   new_board = {}
@@ -71,11 +69,11 @@ def empty_squares(brd)
   brd.keys.select { |num| brd[num] == INITIAL_MARKER }
 end
 
-# rubocop: disable Metrics/LineLength
 def find_at_risk_square(line, board, marker)
-  board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first if board.values_at(*line).count(marker) == 2
+  if board.values_at(*line).count(marker) == 2
+    board.select { |k, v| line.include?(k) && v == INITIAL_MARKER }.keys.first
+  end
 end
-# rubocop: enable Metrics/LineLength
 
 def joinor(num, punc = ', ', op = 'or ')
   if num.count <= 2
@@ -274,9 +272,9 @@ loop do
       prompt "#{detect_winner(@board)} won!"
 
       adding_player_score
-      # rubocop: disable Metrics/LineLength
-      break if @player_score == @winning_score || @computer_score == @winning_score
-      # rubocop: enable Metrics/LineLength
+      if @player_score == @winning_score || @computer_score == @winning_score
+        break
+      end
       prompt who_is_winning(@player_score, @computer_score)
     else
       prompt "It's a tie."
