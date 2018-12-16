@@ -47,7 +47,11 @@ def busted?(value)
 end
 
 def cards_written_out(cards)
-  cards.map { |card| card.join(' of ') }.to_s.gsub(/["\[\]]/, '')
+  if cards.flatten.count == 2
+    cards.join(' of ')
+  else 
+    cards.map { |card| card.join(' of ') }.to_s.gsub(/["\[\]]/, '')
+  end
 end
 
 def dealers_cards_and_value
@@ -57,7 +61,6 @@ end
 
 def players_cards_and_value
   prompt "Players cards: #{cards_written_out(@players_cards)}"
-  binding.pry
   prompt "Players cards value: #{players_hand_value}"
 end
 
@@ -97,25 +100,46 @@ def game_score
   prompt "Dealers cards = #{dealers_hand_value}"
 end
 
+def hit_or_stay_loop
+  loop do
+    prompt "Dealers first card: #{cards_written_out(@dealers_cards[0])}"
+    puts ""
+    players_cards_and_value
+    puts ""
+
+    break if blackjack?(players_hand_value)
+    sleep(1)
+    prompt 'Hit or Stay?'
+    @answer = gets.chomp
+    break if ['hit', 'stay'].include?(@answer) ||
+             busted?(players_hand_value)
+    prompt 'That is not a valid answer'
+    sleep(1)
+  end
+end
+
+def end_of_turn(player)
+  if blackjack?(player)
+    prompt 'Blackjack!'
+
+  elsif busted?(player)
+    prompt 'Bust!'
+
+  else
+    prompt "You chose to stay" ? player == players_hand_value : "Dealer stays"
+  end
+end
+
 def players_turn
   loop do
-    loop do
-      players_cards_and_value
-
-      break if blackjack?(players_hand_value)
-
-      prompt 'Hit or Stay?'
-      @answer = gets.chomp
-      break if ['hit', 'stay'].include?(@answer) || 
-               busted?(players_hand_value)
-      prompt 'That is not a valid answer'
-      sleep(1)
-    end
+    system 'clear'
+    hit_or_stay_loop
 
     if @answer.casecmp?('Hit')
       prompt 'You chose to hit'
       @players_cards << @cards.shift
       sleep(1)
+      puts " "
     end
 
     break if blackjack?(players_hand_value) ||
@@ -123,24 +147,19 @@ def players_turn
              @answer == 'stay'
   end
 
-  if blackjack?(players_hand_value)
-    players_cards_and_value
-    prompt 'Blackjack!'
+  end_of_turn(players_hand_value)
 
-  elsif busted?(players_hand_value)
-    players_cards_and_value
-    prompt 'Bust!'
-
-  else
-    prompt "You chose to stay"
-  end
   sleep(1)
 end
 
 def dealers_turn
   loop do
     loop do
+      system 'clear'
+      players_cards_and_value
+      puts ""
       dealers_cards_and_value
+      puts ""
       sleep(1)
 
       break if blackjack?(dealers_hand_value) ||
@@ -159,15 +178,7 @@ def dealers_turn
              (SAFETY_VALUE..BEST_SCORE).cover?(dealers_hand_value)
   end
 
-  if blackjack?(dealers_hand_value)
-    prompt 'Dealer Blackjack!'
-
-  elsif busted?(dealers_hand_value)
-    prompt "Dealer busted!"
-
-  else
-    prompt 'Dealer stays'
-  end
+  end_of_turn(dealers_hand_value)
   sleep(1)
 end
 
@@ -176,8 +187,6 @@ loop do
   prompt "Welcome to 21!"
 
   shuffle_and_deal
-
-  prompt "Dealers first card: #{@dealers_cards[0].join(' of ')}"
 
   players_turn
   dealers_turn unless busted?(players_hand_value) ||
