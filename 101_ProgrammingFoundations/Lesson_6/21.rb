@@ -1,7 +1,7 @@
 require 'pry'
 
 BEST_SCORE = 21
-SAFETY_VALUE = 17
+TOTAL_WINS = 5
 @player_score = 0
 @dealers_score = 0
 @ranks = %w[2 3 4 5 6 7 8 9 10 Jack Queen King Ace]
@@ -58,7 +58,6 @@ end
 def dealers_cards_and_value
   prompt "Dealers cards: #{cards_written_out(@dealers_cards)}"
   prompt "Dealers cards value: #{dealers_hand_value}"
-  puts "-----------"
 end
 
 def players_cards_and_value
@@ -81,18 +80,14 @@ def players_hand_value
   total_value(@players_cards)
 end
 
-def detect_result(dealer_cards, player_cards)
+def detect_result(_dealer_cards, _player_cards)
   player_total = players_hand_value
   dealer_total = dealers_hand_value
 
-  if player_total > 21
+  if player_total > BEST_SCORE
     :player_busted
-  elsif dealer_total > 21
+  elsif dealer_total > BEST_SCORE
     :dealer_busted
-  elsif dealer_total == 21
-    :dealer_blackjack
-  elsif player_total == 21
-    :player_blackjack
   elsif dealer_total < player_total
     :player
   elsif dealer_total > player_total
@@ -102,38 +97,42 @@ def detect_result(dealer_cards, player_cards)
   end
 end
 
-def display_result(dealer_cards, player_cards)
-  result = detect_result(dealer_cards, player_cards)
-
-  case result
+def adding_score
+  case @result
   when :player_busted
-    prompt "You busted! Dealer wins!"
+    @dealers_score += 1
+  when :dealer
     @dealers_score += 1
   when :dealer_busted
-    prompt "Dealer busted! You win!"
     @player_score += 1
   when :player
-    prompt "You win!"
     @player_score += 1
+  end
+end
+
+def display_result(dealer_cards, player_cards)
+  @result = detect_result(dealer_cards, player_cards)
+
+  case @result
+  when :player_busted
+    prompt "You busted! Dealer wins!"
+  when :dealer_busted
+    prompt "Dealer busted! You win!"
+  when :player
+    prompt "You win!"
   when :dealer
     prompt "Dealer wins!"
-    @dealers_score += 1
-  when :dealer_blackjack
-    prompt "Blackjack! Dealer wins"
-    @dealers_score += 1
-  when :player_blackjack
-    prompt "Blackack! Player wins"
-    @player_score += 1
   when :tie
     prompt "It's a tie!"
   end
+
+  adding_score
 end
 
 def game_score
   puts "-----------"
-  prompt "Players score: #{@player_score}"
-  prompt "Dealers score: #{@dealers_score}"
-  puts "-----------"
+  puts "Players score: #{@player_score}"
+  puts "Dealers score: #{@dealers_score}"
 end
 
 def hit_or_stay_header
@@ -145,6 +144,7 @@ end
 def hit_or_stay_loop
   loop do
     system 'clear'
+    header
     hit_or_stay_header
 
     break if blackjack?(players_hand_value)
@@ -161,15 +161,15 @@ end
 
 def players_turn
   loop do
-    system 'clear'
     hit_or_stay_loop
 
     if @answer.casecmp?('Hit')
       prompt 'You chose to hit'
       @players_cards << @cards.shift
-      sleep(1)
-      puts ""
+    else
+      prompt 'You chose to stay'
     end
+    sleep(1)
     system 'clear'
     hit_or_stay_header
 
@@ -182,6 +182,7 @@ end
 def dealers_turn
   loop do
     system 'clear'
+    header
     players_cards_and_value
     puts ""
     dealers_cards_and_value
@@ -196,21 +197,51 @@ def dealers_turn
   end
 end
 
+def new_game_pause
+  puts "-----------"
+  puts 'New game starting'
+  sleep(1)
+  puts '.'
+  sleep(1)
+  puts '.'
+  sleep(1)
+  puts '.'
+  sleep(1)
+end
+
+def header
+  puts 'First one to 5 wins the match'
+  if @player_score > 0 || @dealers_score > 0
+    game_score
+  end
+  puts "-----------"
+end
+
 system 'clear'
 prompt "Welcome to 21!"
 sleep(1)
 
 loop do
-  shuffle_and_deal
+  loop do
+    shuffle_and_deal
 
-  players_turn
-  dealers_turn unless busted?(players_hand_value) ||
-                      blackjack?(players_hand_value)
+    players_turn
+    dealers_turn unless busted?(players_hand_value) ||
+                        blackjack?(players_hand_value)
 
-  display_result(@dealer_cards, @players_cards)
-  game_score
+    display_result(@dealer_cards, @players_cards)
+    game_score
+    break if @player_score == TOTAL_WINS || @dealers_score == TOTAL_WINS
+    new_game_pause
+  end
 
   loop do
+    if @player_score == TOTAL_WINS
+      prompt "Player won the match!"
+    else
+      prompt "Dealer won the match!"
+    end
+
     prompt "Would you like to play again? (Y or N)"
     @play_answer = gets.chomp
     break if @play_answer.downcase == 'n' || @play_answer.downcase == 'y'
