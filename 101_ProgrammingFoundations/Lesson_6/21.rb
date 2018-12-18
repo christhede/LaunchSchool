@@ -2,7 +2,8 @@ require 'pry'
 
 BEST_SCORE = 21
 SAFETY_VALUE = 17
-
+@player_score = 0
+@dealers_score = 0
 @ranks = %w[2 3 4 5 6 7 8 9 10 Jack Queen King Ace]
 @suits = %w[Hearts Spades Diamonds Clubs]
 @cards = []
@@ -22,13 +23,13 @@ def total_value(cards)
 
   sum = 0
   values.each do |value|
-    if value == 'Ace'
-      sum += 11
-    elsif value.to_i.zero?
-      sum += 10
-    else
-      sum += value.to_i
-    end
+    sum += if value == 'Ace'
+             11
+           elsif value.to_i.zero?
+             10
+           else
+             value.to_i
+           end
   end
 
   values.select { |value| value == 'Ace' }.count.times do
@@ -49,7 +50,7 @@ end
 def cards_written_out(cards)
   if cards.flatten.count == 2
     cards.join(' of ')
-  else 
+  else
     cards.map { |card| card.join(' of ') }.to_s.gsub(/["\[\]]/, '')
   end
 end
@@ -57,11 +58,13 @@ end
 def dealers_cards_and_value
   prompt "Dealers cards: #{cards_written_out(@dealers_cards)}"
   prompt "Dealers cards value: #{dealers_hand_value}"
+  puts "-----------"
 end
 
 def players_cards_and_value
   prompt "Players cards: #{cards_written_out(@players_cards)}"
   prompt "Players cards value: #{players_hand_value}"
+  puts "-----------"
 end
 
 def shuffle_and_deal
@@ -78,36 +81,74 @@ def players_hand_value
   total_value(@players_cards)
 end
 
-def whose_won
-  if dealers_hand_value > players_hand_value &&
-     dealers_hand_value <= BEST_SCORE ||
-     blackjack?(dealers_hand_value)
+def detect_result(dealer_cards, player_cards)
+  player_total = players_hand_value
+  dealer_total = dealers_hand_value
 
-    game_score
-    prompt 'Dealer won!'
+  if player_total > 21
+    :player_busted
+  elsif dealer_total > 21
+    :dealer_busted
+  elsif dealer_total == 21
+    :dealer_blackjack
+  elsif player_total == 21
+    :player_blackjack
+  elsif dealer_total < player_total
+    :player
+  elsif dealer_total > player_total
+    :dealer
+  else
+    :tie
+  end
+end
 
-  elsif players_hand_value > dealers_hand_value &&
-        players_hand_value <= BEST_SCORE ||
-        blackjack?(players_hand_value)
+def display_result(dealer_cards, player_cards)
+  result = detect_result(dealer_cards, player_cards)
 
-    game_score
-    prompt 'Player won!'
+  case result
+  when :player_busted
+    prompt "You busted! Dealer wins!"
+    @dealers_score += 1
+  when :dealer_busted
+    prompt "Dealer busted! You win!"
+    @player_score += 1
+  when :player
+    prompt "You win!"
+    @player_score += 1
+  when :dealer
+    prompt "Dealer wins!"
+    @dealers_score += 1
+  when :dealer_blackjack
+    prompt "Blackjack! Dealer wins"
+    @dealers_score += 1
+  when :player_blackjack
+    prompt "Blackack! Player wins"
+    @player_score += 1
+  when :tie
+    prompt "It's a tie!"
   end
 end
 
 def game_score
-  prompt "Players cards = #{players_hand_value}"
-  prompt "Dealers cards = #{dealers_hand_value}"
+  puts "-----------"
+  prompt "Players score: #{@player_score}"
+  prompt "Dealers score: #{@dealers_score}"
+  puts "-----------"
+end
+
+def hit_or_stay_header
+  prompt "Dealers first card: #{cards_written_out(@dealers_cards[0])}"
+  puts ""
+  players_cards_and_value
 end
 
 def hit_or_stay_loop
   loop do
-    prompt "Dealers first card: #{cards_written_out(@dealers_cards[0])}"
-    puts ""
-    players_cards_and_value
-    puts ""
+    system 'clear'
+    hit_or_stay_header
 
     break if blackjack?(players_hand_value)
+
     sleep(1)
     prompt 'Hit or Stay?'
     @answer = gets.chomp
@@ -115,18 +156,6 @@ def hit_or_stay_loop
              busted?(players_hand_value)
     prompt 'That is not a valid answer'
     sleep(1)
-  end
-end
-
-def end_of_turn(player)
-  if blackjack?(player)
-    prompt 'Blackjack!'
-
-  elsif busted?(player)
-    prompt 'Bust!'
-
-  else
-    prompt "You chose to stay" ? player == players_hand_value : "Dealer stays"
   end
 end
 
@@ -139,60 +168,47 @@ def players_turn
       prompt 'You chose to hit'
       @players_cards << @cards.shift
       sleep(1)
-      puts " "
+      puts ""
     end
+    system 'clear'
+    hit_or_stay_header
 
     break if blackjack?(players_hand_value) ||
              busted?(players_hand_value) ||
              @answer == 'stay'
   end
-
-  end_of_turn(players_hand_value)
-
-  sleep(1)
 end
 
 def dealers_turn
   loop do
-    loop do
-      system 'clear'
-      players_cards_and_value
-      puts ""
-      dealers_cards_and_value
-      puts ""
-      sleep(1)
+    system 'clear'
+    players_cards_and_value
+    puts ""
+    dealers_cards_and_value
+    puts ""
+    sleep(1)
 
-      break if blackjack?(dealers_hand_value) ||
-               busted?(dealers_hand_value) ||
-               (SAFETY_VALUE..BEST_SCORE).cover?(dealers_hand_value) &&
-               players_hand_value < SAFETY_VALUE ||
-               dealers_hand_value > players_hand_value
+    break unless dealers_hand_value < players_hand_value
 
-      @dealers_cards << @cards.shift
-      prompt 'Dealer hits'
-      sleep(1)
-    end
-
-    break if blackjack?(dealers_hand_value) ||
-             busted?(dealers_hand_value) ||
-             (SAFETY_VALUE..BEST_SCORE).cover?(dealers_hand_value)
+    @dealers_cards << @cards.shift
+    prompt 'Dealer hits'
+    sleep(1)
   end
-
-  end_of_turn(dealers_hand_value)
-  sleep(1)
 end
 
-loop do
-  system 'clear'
-  prompt "Welcome to 21!"
+system 'clear'
+prompt "Welcome to 21!"
+sleep(1)
 
+loop do
   shuffle_and_deal
 
   players_turn
   dealers_turn unless busted?(players_hand_value) ||
                       blackjack?(players_hand_value)
 
-  whose_won
+  display_result(@dealer_cards, @players_cards)
+  game_score
 
   loop do
     prompt "Would you like to play again? (Y or N)"
