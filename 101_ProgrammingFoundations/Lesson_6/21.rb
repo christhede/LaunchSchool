@@ -2,8 +2,7 @@ require 'pry'
 
 BEST_SCORE = 21
 TOTAL_WINS = 5
-@player_score = 0
-@dealers_score = 0
+
 @ranks = %w[2 3 4 5 6 7 8 9 10 Jack Queen King Ace]
 @suits = %w[Hearts Spades Diamonds Clubs]
 @cards = []
@@ -63,7 +62,6 @@ end
 def players_cards_and_value
   prompt "Players cards: #{cards_written_out(@players_cards)}"
   prompt "Players cards value: #{players_hand_value}"
-  puts "-----------"
 end
 
 def shuffle_and_deal
@@ -80,44 +78,42 @@ def players_hand_value
   total_value(@players_cards)
 end
 
-def detect_result(_dealer_cards, _player_cards)
-  player_total = players_hand_value
-  dealer_total = dealers_hand_value
-
-  if player_total > BEST_SCORE
+def detect_result
+  if players_hand_value > BEST_SCORE
     :player_busted
-  elsif dealer_total > BEST_SCORE
+  elsif dealers_hand_value > BEST_SCORE
     :dealer_busted
-  elsif dealer_total < player_total
+  elsif dealers_hand_value < players_hand_value
     :player
-  elsif dealer_total > player_total
+  elsif dealers_hand_value > players_hand_value
     :dealer
   else
     :tie
   end
 end
 
-def adding_score
-  case @result
-  when :player_busted
-    @dealers_score += 1
-  when :dealer
-    @dealers_score += 1
-  when :dealer_busted
-    @player_score += 1
-  when :player
-    @player_score += 1
-  end
+def player_won?
+  detect_result == :dealer_busted ||
+  detect_result == :player
+end
+
+def dealer_won?
+  detect_result == :player_busted ||
+  detect_result == :dealer
+end
+
+def tie?
+  detect_result == :tie
 end
 
 def display_result(dealer_cards, player_cards)
-  @result = detect_result(dealer_cards, player_cards)
+  result = detect_result
 
-  case @result
+  case result
   when :player_busted
     prompt "You busted! Dealer wins!"
   when :dealer_busted
-    prompt "Dealer busted! You win!"
+    prompt "Dealer bust! You win!"
   when :player
     prompt "You win!"
   when :dealer
@@ -125,14 +121,14 @@ def display_result(dealer_cards, player_cards)
   when :tie
     prompt "It's a tie!"
   end
-
-  adding_score
 end
 
-def game_score
+def footer(player_score, dealer_score)
   puts "-----------"
-  puts "Players score: #{@player_score}"
-  puts "Dealers score: #{@dealers_score}"
+  puts "Players score: #{player_score}"
+  puts "Dealers score: #{dealer_score}"
+  puts 'First one to 5 wins the match'
+  puts "-----------"
 end
 
 def hit_or_stay_header
@@ -144,7 +140,6 @@ end
 def hit_or_stay_loop
   loop do
     system 'clear'
-    header
     hit_or_stay_header
 
     break if blackjack?(players_hand_value)
@@ -170,7 +165,7 @@ def players_turn
       prompt 'You chose to stay'
     end
     sleep(1)
-    system 'clear'
+    system('clear')
     hit_or_stay_header
 
     break if blackjack?(players_hand_value) ||
@@ -182,7 +177,6 @@ end
 def dealers_turn
   loop do
     system 'clear'
-    header
     players_cards_and_value
     puts ""
     dealers_cards_and_value
@@ -198,7 +192,6 @@ def dealers_turn
 end
 
 def new_game_pause
-  puts "-----------"
   puts 'New game starting'
   sleep(1)
   puts '.'
@@ -209,15 +202,14 @@ def new_game_pause
   sleep(1)
 end
 
-def header
-  puts 'First one to 5 wins the match'
-  if @player_score > 0 || @dealers_score > 0
-    game_score
-  end
-  puts "-----------"
+def adding_score(score)
+  score += 1
 end
 
-system 'clear'
+player_score = 0
+dealer_score = 0
+
+system('clear')
 prompt "Welcome to 21!"
 sleep(1)
 
@@ -230,13 +222,22 @@ loop do
                         blackjack?(players_hand_value)
 
     display_result(@dealer_cards, @players_cards)
-    game_score
-    break if @player_score == TOTAL_WINS || @dealers_score == TOTAL_WINS
+
+    if player_won?
+      player_score = adding_score(player_score)
+    elsif dealer_won?
+      dealer_score = adding_score(dealer_score)
+    end
+    binding.pry
+
+    footer(player_score, dealer_score)
+
+    break if player_score == TOTAL_WINS || dealer_score == TOTAL_WINS
     new_game_pause
   end
 
   loop do
-    if @player_score == TOTAL_WINS
+    if player_score == TOTAL_WINS
       prompt "Player won the match!"
     else
       prompt "Dealer won the match!"

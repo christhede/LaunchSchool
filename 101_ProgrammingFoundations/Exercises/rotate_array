@@ -1,0 +1,25 @@
+def rotate_array(array)
+  p array << array.shift
+end
+
+def rotate_integer(integer)
+  array = integer.to_s.chars
+  array << array.shift
+  p array.join.to_i
+end
+
+def rotate_string(string)
+  array = string.chars
+  array << array.shift
+  p array.join
+end
+
+rotate_string('super')
+rotate_integer(543451)
+rotate_array([7, 3, 5, 2, 9, 1]) == [3, 5, 2, 9, 1, 7]
+rotate_array(['a', 'b', 'c']) == ['b', 'c', 'a']
+rotate_array(['a']) == ['a']
+
+x = [1, 2, 3, 4]
+rotate_array(x) == [2, 3, 4, 1]   # => true
+x == [1, 2, 3, 4] 
