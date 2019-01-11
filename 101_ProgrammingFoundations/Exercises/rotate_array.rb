@@ -1,7 +1,5 @@
 def rotate_array(array)
-  new_array = []
-  new_array << array.shift
-  puts new_array
+ array[1..-1] + [array[0]]
 end
 
 def rotate_integer(integer)
