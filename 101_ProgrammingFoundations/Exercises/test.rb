@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 require 'pry'
 
 # Term frequency - inverse document frequency:
@@ -71,3 +72,13 @@ puts tfidf("mastery", document3, documents) # ~ 3.3
 puts tfidf("some", document1, documents) # 0
 puts tfidf("some", document2, documents) # ~ 0.4
 puts tfidf("some", document3, documents) # ~ 0.4
+=======
+counter = 10
+
+counter.times do
+  puts counter
+  counter -= 1
+end
+
+puts 'LAUNCH!'
+>>>>>>> f50ebe3a602b290d696c926318e0c8f251fbf03b
