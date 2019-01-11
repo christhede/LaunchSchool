@@ -1,5 +1,20 @@
+require 'pry'
+
 def triangle(x, y, z)
-  case 
+  sides = [x, y, z]
+  largest_side = sides.max
+
+  # binding.pry
+  case
+  when 2 * largest_side > sides.reduce(:+), sides.include?(0)
+    puts :invalid
+  when x == y && y == z
+    puts :equilateral
+  when x == y || y == z || z == x
+    puts :isosceles
+  else 
+    puts :scalene
+  end
 end
 
 
