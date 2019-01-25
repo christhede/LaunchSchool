@@ -1,14 +1,14 @@
-limit = 15
+def dot_separated_ip_address?(input_string)
+  dot_separated_words = input_string.split(".")
+  return false unless dot_separated_words.size == 4
 
-def fib(first_num, second_num)
-  limit = 15
-  while second_num < limit
-    sum = first_num + second_num
-    first_num = second_num
-    second_num = sum
+  while dot_separated_words.size > 0 do
+    word = dot_separated_words.pop
+    return false unless is_an_ip_number?(word)
   end
-  sum
+
+  return true unless 
 end
 
-result = fib(0, 1)
-puts "result is #{result}"
+
+#e.g. "10.4.5.11".
