@@ -18,7 +18,7 @@
   # else neither
 # divide each hash value by string.size to find out percentage
 # returns a hash of 3 entries: lowercase:. uppercase:, neitehr
-require 'pry'
+require ''
 
 def letter_percentages(string)
   hsh = Hash.new{0}
