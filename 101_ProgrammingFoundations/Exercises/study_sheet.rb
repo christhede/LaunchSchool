@@ -65,6 +65,9 @@ a += 's'
 # considers if the return value of the block evaluates to true or not
 # if it does, then it takes that element and puts it in a new array
 
+variable scope
+# Variables initialized in an outer scope can be accessed in an inner scope, but not vice versa.
+
 variable shadowing
 
 a = 4
@@ -91,12 +94,27 @@ Mutating vs Non-mutating methods
 
 puts vs return
 
+
 variables as pointers
 
 
 false vs nil and the idea of "truthiness"
+nil
+# nil is a special value reserved to indicate the absence of value.
+false 
+# false as in the boolean false
+
+# In Ruby, every value apart from false and nil, evaluates to true
+
 
 method definition and method invocation
+def greeting # method definition 
+   # a method definition can't access local variables in another scope
+   # The only variables a method definition has access to must be passed into the method definition.
+   # Just remember: local variables that are not initialized inside a method definition must be 
+  # passed in as parameters.
+greeting() # method invocation
+
 
 implicit return value of method invocations and blocks
 
