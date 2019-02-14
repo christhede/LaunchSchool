@@ -22,6 +22,7 @@ def computer(english)
     end
   end
   p eval new_str
+  
 end
 
 # computer('two plus two')
