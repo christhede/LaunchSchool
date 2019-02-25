@@ -1,7 +1,7 @@
 class GoodDog
   attr_accessor :name, :height, :weight
 
-  def initialize(n, h, w)
+  def initialize(n, w, h)
     @name = n
     @height = h
     @weight = w
@@ -11,7 +11,7 @@ class GoodDog
     "#{name} says Arf!"
   end
 
-  def change_info(n, h, w)
+  def change_info(n, w, h)
     self.name = n
     self.height = h
     self.weight = w
@@ -22,8 +22,10 @@ class GoodDog
   end
 end
 
-sparky = GoodDog.new('Sparky', '123 cm', '25 lbs')
+sparky = GoodDog.new("Sparky", "182 lbs", "300 cm")
+puts sparky.info
+sparky.change_info("Sparticus", "boobies", "butts")
 puts sparky.info
 
-sparky.change_info('Sparticus', '200 cm', '50 lbs')
-puts sparky.info
+# fido = GoodDog.new("Fido")
+# puts fido.speak
