@@ -31,7 +31,7 @@ class Spock
 end
 
 class Player
-  attr_accessor :move, :name, :score
+  attr_accessor :move, :name, :score, :choice
   VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
   # include Choices
 
@@ -55,10 +55,10 @@ class Human < Player
   end
 
   def choose
-    choice = nil
+    self.choice = nil
     loop do
-      puts "Please choose one: #{Player::VALUES}"
-      choice = gets.chomp
+      puts "Please choose one: #{Player::VALUES.map(&:capitalize).to_s.gsub(/["'\[\]]/, '')}"
+      self.choice = gets.chomp
       break if Player::VALUES.include? choice.downcase
 
       puts "Sorry, invalid choice"
@@ -84,7 +84,7 @@ class Computer < Player
   end
 
   def choose
-    choice = Player::VALUES.sample
+    self.choice = Player::VALUES.sample
 
     case choice
     when 'rock' then self.move = Rock.new
@@ -119,8 +119,8 @@ class RPSGame
   end
 
   def display_moves
-    puts "#{human.name} chose: #{human.move.class}"
-    puts "#{computer.name} chose: #{computer.move.class}"
+    puts "#{human.name} chose: #{human.choice}"
+    puts "#{computer.name} chose: #{computer.choice}"
   end
 
   def display_score
@@ -170,15 +170,29 @@ class RPSGame
 
     answer.downcase == "y"
   end
+  
+  @@human_moves = Hash.new(0)
+  @@computer_moves = Hash.new(0)
+  @@round_counter = 0
+  
+  def display_previous_moves
+    puts "Previous moves:"
+    @@human_moves["Game #{@@round_counter}"] = human.choice
+    @@computer_moves["Game #{@@round_counter}"] = computer.choice
+    puts @@human_moves
+    puts @@computer_moves
+  end
 
   def gameplay
     # system("clear")
     display_score
+    display_previous_moves if @@round_counter > 0
     human.choose
     computer.choose
     display_moves
     display_winner
     add_score
+    @@round_counter += 1
   end
 
   def play
