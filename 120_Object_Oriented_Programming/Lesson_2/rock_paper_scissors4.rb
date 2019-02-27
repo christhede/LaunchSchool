@@ -4,19 +4,11 @@ class Rock
   def >(other_move)
     other_move.class == Lizard || other_move.class == Scissors
   end
-
-  def to_s
-    @value
-  end
 end
 
 class Paper 
   def >(other_move)
     other_move.class == Rock || other_move.class == Spock
-  end
-
-  def to_s
-    @value
   end
 end
 
@@ -24,19 +16,11 @@ class Scissors
   def >(other_move)
     other_move.class == Paper || other_move.class == Lizard
   end
-
-  def to_s
-    @value
-  end
 end
 
 class Lizard
   def >(other_move)
     other_move.class == Spock || other_move.class == Paper
-  end
-
-  def to_s
-    @value
   end
 end
 
@@ -44,13 +28,10 @@ class Spock
   def >(other_move)
     other_move.class == Scissors || other_move.class == Rock
   end
-
-  def to_s
-    @value
-  end
 end
 
 class Player
+  attr_accessor :move, :name, :score
   VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
   # include Choices
 
@@ -61,7 +42,6 @@ class Player
 end
 
 class Human < Player
-  attr_accessor :move, :name, :score
   def set_name
     n = nil
     loop do
@@ -99,7 +79,6 @@ class Human < Player
 end
 
 class Computer < Player
-  attr_accessor :move, :name, :score
   def set_name
     self.name = ['R2D2', 'Hal', 'Chappie'].sample
   end
