@@ -1,5 +1,6 @@
 require 'pry'
 
+<<<<<<< HEAD
 module Choices
   def scissors?(input)
     input == 'scissors'
@@ -56,52 +57,78 @@ class Rock < Move
 
   def to_s
     @value
+=======
+class Rock
+  def >(other_move)
+    other_move.class == Lizard || other_move.class == Scissors
+>>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Paper 
+<<<<<<< HEAD
   def compare(other_move)
     other_move.class == Rock || other_move.class == Spock
   end
 
   def to_s
     @value
+=======
+  def >(other_move)
+    other_move.class == Rock || other_move.class == Spock
+>>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Scissors
+<<<<<<< HEAD
   def compare(other_move)
     other_move.class == Paper || other_move.class == Lizard
   end
 
   def to_s
     @value
+=======
+  def >(other_move)
+    other_move.class == Paper || other_move.class == Lizard
+>>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Lizard
+<<<<<<< HEAD
   def compare(other_move)
     other_move.class == Spock || other_move.class == Paper
   end
 
   def to_s
     @value
+=======
+  def >(other_move)
+    other_move.class == Spock || other_move.class == Paper
+>>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Spock
+<<<<<<< HEAD
   def compare(other_move)
     other_move.class == Scissors || other_move.class == Rock
   end
 
   def to_s
     @value
+=======
+  def >(other_move)
+    other_move.class == Scissors || other_move.class == Rock
+>>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Player
-  include Choices
-  attr_accessor :move, :name, :score
+  attr_accessor :move, :name, :score, :choice
+  VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
+  # include Choices
 
   def initialize
     set_name
@@ -123,26 +150,21 @@ class Human < Player
   end
 
   def choose
-    choice = nil
+    self.choice = nil
     loop do
-      puts "Please choose one: #{Move::VALUES}"
-      choice = gets.chomp
-      break if Move::VALUES.include? choice.downcase
+      puts "Please choose one: #{Player::VALUES.map(&:capitalize).to_s.gsub(/["'\[\]]/, '')}"
+      self.choice = gets.chomp
+      break if Player::VALUES.include? choice.downcase
 
       puts "Sorry, invalid choice"
     end
-    self.move = choice
+    
     case choice
-    when rock?(choice)
-      Rock.new
-    when scissors?(choice)
-      Scissors.new
-    when paper?(choice)
-      Paper.new
-    when spock?(choice)
-      Spock.new
-    when lizard?(choice)
-      Lizard.new
+    when 'rock' then self.move = Rock.new
+    when 'paper' then self.move = Paper.new
+    when 'scissors' then self.move = Scissors.new
+    when 'lizard' then self.move = Lizard.new
+    when 'spock' then self.move = Spock.new
     end
   end
 
@@ -157,19 +179,14 @@ class Computer < Player
   end
 
   def choose
-    choice = Move::VALUES.sample
-    self.move = choice
+    self.choice = Player::VALUES.sample
+
     case choice
-    when rock?(choice)
-      Rock.new
-    when scissors?(choice)
-      Scissors.new
-    when paper?(choice)
-      Paper.new
-    when spock?(choice)
-      Spock.new
-    when lizard?(choice)
-      Lizard.new
+    when 'rock' then self.move = Rock.new
+    when 'paper' then self.move = Paper.new
+    when 'scissors' then self.move = Scissors.new
+    when 'lizard' then self.move = Lizard.new
+    when 'spock' then self.move = Spock.new
     end
   end
 
@@ -197,8 +214,8 @@ class RPSGame
   end
 
   def display_moves
-    puts "#{human.name} chose: #{human.move}"
-    puts "#{computer.name} chose: #{computer.move}"
+    puts "#{human.name} chose: #{human.choice}"
+    puts "#{computer.name} chose: #{computer.choice}"
   end
 
   def display_score
@@ -208,10 +225,9 @@ class RPSGame
   end
 
   def display_winner
-    binding.pry
-    if human.move.compare(computer.move)
+    if human.move.>(computer.move)
       puts "#{human.name} won!"
-    elsif computer.move.compare(human.move)
+    elsif computer.move.>(human.move)
       puts "#{computer.name} won!"
     else
       puts "It's a tie."
@@ -219,10 +235,12 @@ class RPSGame
   end
 
   def add_score
-    if human.move.compare(computer.move)
+    if human.move.>(computer.move)
       human.add_score
-    else
+    elsif computer.move > human.move
       computer.add_score
+    else
+      nil
     end
   end
 
@@ -247,15 +265,29 @@ class RPSGame
 
     answer.downcase == "y"
   end
+  
+  @@human_moves = Hash.new(0)
+  @@computer_moves = Hash.new(0)
+  @@round_counter = 0
+  
+  def display_previous_moves
+    puts "Previous moves:"
+    @@human_moves["Game #{@@round_counter}"] = human.choice
+    @@computer_moves["Game #{@@round_counter}"] = computer.choice
+    puts @@human_moves
+    puts @@computer_moves
+  end
 
   def gameplay
-    system("clear")
+    # system("clear")
     display_score
+    display_previous_moves if @@round_counter > 0
     human.choose
     computer.choose
     display_moves
     display_winner
     add_score
+    @@round_counter += 1
   end
 
   def play
