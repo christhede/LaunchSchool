@@ -51,7 +51,7 @@ end
 
 class Rock < Move
   def compare(other_move)
-    lizard?(other_move) || scissors?(other_move)
+    other_move.class == Lizard || other_move.class == Scissors
   end
 
   def to_s
@@ -61,7 +61,7 @@ end
 
 class Paper 
   def compare(other_move)
-    rock?(other_move) || spock?(other_move)
+    other_move.class == Rock || other_move.class == Spock
   end
 
   def to_s
@@ -71,7 +71,7 @@ end
 
 class Scissors
   def compare(other_move)
-    paper?(other_move) || lizard?(other_move)
+    other_move.class == Paper || other_move.class == Lizard
   end
 
   def to_s
@@ -81,7 +81,7 @@ end
 
 class Lizard
   def compare(other_move)
-    spock?(other_move) || paper?(other_move)
+    other_move.class == Spock || other_move.class == Paper
   end
 
   def to_s
@@ -91,7 +91,7 @@ end
 
 class Spock
   def compare(other_move)
-    scissors?(other_move) || rock?(other_move)
+    other_move.class == Scissors || other_move.class == Rock
   end
 
   def to_s
