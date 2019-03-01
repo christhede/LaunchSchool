@@ -1,137 +1,40 @@
 require 'pry'
 
-<<<<<<< HEAD
-module Choices
-  def scissors?(input)
-    input == 'scissors'
-  end
-
-  def rock?(input)
-    input == 'rock'
-  end
-
-  def paper?(input)
-    input == 'paper'
-  end
-
-  def spock?(input)
-    input == 'spock'
-  end
-
-  def lizard?(input)
-    input == 'lizard'
-  end
-end
-
-class Move
-  include Choices
-
-  VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
-
-  # def initialize(value)
-  #   @value = value
-  # end
-
-  # def compare(other_move)
-  #   (scissors? && other_move.paper?) ||
-  #     (paper? && other_move.rock?) ||
-  #     (rock? && other_move.lizard?) ||
-  #     (lizard? && other_move.spock?) ||
-  #     (spock? && other_move.scissors?) ||
-  #     (scissors? && other_move.lizard?) ||
-  #     (lizard? && other_move.paper?) ||
-  #     (paper? && other_move.spock?) ||
-  #     (spock? && other_move.rock?) ||
-  #     (rock? && other_move.scissors?)
-  # end
-
-  # def to_s
-  #   @value
-  # end
-end
-
-class Rock < Move
-  def compare(other_move)
-    other_move.class == Lizard || other_move.class == Scissors
-  end
-
-  def to_s
-    @value
-=======
 class Rock
   def >(other_move)
     other_move.class == Lizard || other_move.class == Scissors
->>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Paper 
-<<<<<<< HEAD
-  def compare(other_move)
-    other_move.class == Rock || other_move.class == Spock
-  end
-
-  def to_s
-    @value
-=======
   def >(other_move)
     other_move.class == Rock || other_move.class == Spock
->>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Scissors
-<<<<<<< HEAD
-  def compare(other_move)
-    other_move.class == Paper || other_move.class == Lizard
-  end
-
-  def to_s
-    @value
-=======
   def >(other_move)
     other_move.class == Paper || other_move.class == Lizard
->>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Lizard
-<<<<<<< HEAD
-  def compare(other_move)
-    other_move.class == Spock || other_move.class == Paper
-  end
-
-  def to_s
-    @value
-=======
   def >(other_move)
     other_move.class == Spock || other_move.class == Paper
->>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Spock
-<<<<<<< HEAD
-  def compare(other_move)
-    other_move.class == Scissors || other_move.class == Rock
-  end
-
-  def to_s
-    @value
-=======
   def >(other_move)
     other_move.class == Scissors || other_move.class == Rock
->>>>>>> 0b8b2851c763afe038e01a367eaa796d15459b01
   end
 end
 
 class Player
   attr_accessor :move, :name, :score, :choice
   VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
-  # include Choices
 
   def initialize
-    set_name
     @score = 0
   end
 end
@@ -207,6 +110,8 @@ class RPSGame
 
   def display_welcome_message
     puts "Welcome to Rock, Paper, Scissors!"
+    human.set_name
+    computer.set_name
   end
 
   def display_goodbye_message
