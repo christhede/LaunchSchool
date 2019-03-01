@@ -15,10 +15,9 @@
 
 def rotate_array(array)
   new_array = array
-  first = new_array.shift
-  last = new_array.pop
-  new_array << first
-  new_array.unshift(last)
+
+  last = new_array.shift
+  new_array << last
 
   p new_array
 end
