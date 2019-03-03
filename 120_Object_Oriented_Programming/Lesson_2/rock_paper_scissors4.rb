@@ -112,10 +112,10 @@ class RPSGame
   LINE_BREAK = "————————————"
   FIREWORKS = "************"
   attr_accessor :human, :computer
-  WINNING_SCORE = 3
+  WINNING_SCORE = 7
 
   def game_count
-    puts "Match #{@@round_counter}"
+    puts "Game #{@@round_counter}"
     puts LINE_BREAK
   end
 
@@ -128,6 +128,8 @@ class RPSGame
     puts "Welcome to Rock, Paper, Scissors!"
     human.set_name
     computer.set_name
+    puts "Welcome #{human.name}, let's get started."
+    sleep(1)
   end
 
   def display_goodbye_message
@@ -141,17 +143,20 @@ class RPSGame
   end
 
   def display_score
-    puts "First one to #{WINNING_SCORE} wins the game."
+    puts "First one to #{WINNING_SCORE} wins."
     puts "Player: #{human.score}"
     puts "Computer: #{computer.score}"
     puts LINE_BREAK
   end
 
   def display_winner
+    @@winner = nil
     if human.move.compare(computer.move)
       puts "#{human.name} won!"
+      @@winner = 'human'
     elsif computer.move.compare(human.move)
       puts "#{computer.name} won!"
+      @@winner = 'computer'
     else
       puts "It's a tie."
     end
@@ -193,18 +198,29 @@ class RPSGame
 
   def display_previous_moves
     puts "Previous moves:"
-    human_moves = @@human_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
-    comp_moves = @@computer_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
+    display_human_moves = @@human_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
+    display_comp_moves = @@computer_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
     if @@round_counter > 1
-      puts "#{human.name}: #{human_moves}"
-      puts "#{computer.name}: #{comp_moves}"
+      puts "#{human.name}: #{display_human_moves}"
+      puts "#{computer.name}: #{display_comp_moves}"
     end
+    occurance_of_human_winning_words
     puts LINE_BREAK
   end
 
+  def occurance_of_human_winning_words
+    if @@winner == 'human'
+      @@human_wins += 1
+      @@human_winning_word_occurance[human.choice] += 1
+      new_hash = @@human_winning_word_occurance
+      @@human_winning_word_occurance.map { |key, value| @@percentage_of_human_winning_words[key] = (value/@@human_wins.to_f).round(2) }
+      @@percentage_of_human_winning_words
+    end
+  end
+
   def set_previous_moves
-    @@human_moves["Match #{@@round_counter}"] = human.choice
-    @@computer_moves["Match #{@@round_counter}"] = computer.choice
+    @@human_moves["Game #{@@round_counter}"] = human.choice
+    @@computer_moves["Game #{@@round_counter}"] = computer.choice
   end
 
   def reset_score
@@ -235,6 +251,9 @@ class RPSGame
       @@human_moves = Hash.new(0)
       @@computer_moves = Hash.new(0)
       @@round_counter = 1
+      @@human_wins = 0
+      @@human_winning_word_occurance = Hash.new(0)
+      @@percentage_of_human_winning_words = Hash.new(0)
       loop do
         gameplay
         break if human.score == WINNING_SCORE || computer.score == WINNING_SCORE
