@@ -31,11 +31,16 @@ class Spock
 end
 
 class Player
-  attr_accessor :move, :name, :score, :choice
+  attr_accessor :move, :name, :score, :choice, :weighted_values
   VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
 
   def initialize
     @score = 0
+    @weighted_values = {'rock' => 0.20,
+                        'paper' => 0.20,
+                        'scissors' => 0.20,
+                        'spock' => 0.20,
+                        'lizard' => 0.20}
   end
 end
 
@@ -87,7 +92,7 @@ class Computer < Player
   end
 
   def choose
-    self.choice = Player::VALUES.sample
+    self.choice = weighted_random_selection
 
     case choice
     when 'rock' then self.move = Rock.new
@@ -95,6 +100,17 @@ class Computer < Player
     when 'scissors' then self.move = Scissors.new
     when 'lizard' then self.move = Lizard.new
     when 'spock' then self.move = Spock.new
+    end
+  end
+
+  def weighted_random_selection
+    total_weight = @weighted_values.values.sum
+    random_weight = rand(0.0..total_weight)
+    # p random_weight
+    @weighted_values.each do |item, weight|
+      random_weight = random_weight - weight
+      # p random_weight
+      break item if random_weight <= 0
     end
   end
 
@@ -112,7 +128,7 @@ class RPSGame
   LINE_BREAK = "————————————"
   FIREWORKS = "************"
   attr_accessor :human, :computer
-  WINNING_SCORE = 7
+  WINNING_SCORE = 10
 
   def game_count
     puts "Game #{@@round_counter}"
@@ -204,18 +220,32 @@ class RPSGame
       puts "#{human.name}: #{display_human_moves}"
       puts "#{computer.name}: #{display_comp_moves}"
     end
-    occurance_of_human_winning_words
+    p list_of_computer_losing_words
+    change_weight_of_computer_choices
     puts LINE_BREAK
   end
 
-  def occurance_of_human_winning_words
+  def change_weight_of_computer_choices
+    item = @@percentage_of_computer_losing_words.select { |_, weight| weight >= 0.50 && @@human_wins >= 3 }.keys
+    if item[0]
+      computer.weighted_values.map do |key, _| 
+        if key == item[0]
+          computer.weighted_values[key] = 0.10
+        else
+          computer.weighted_values.map {|key, _| computer.weighted_values[key] = 0.225 unless key == item[0] }
+       end
+      end
+    end
+    p computer.weighted_values
+  end
+
+  def list_of_computer_losing_words
     if @@winner == 'human'
       @@human_wins += 1
-      @@human_winning_word_occurance[human.choice] += 1
-      new_hash = @@human_winning_word_occurance
-      @@human_winning_word_occurance.map { |key, value| @@percentage_of_human_winning_words[key] = (value/@@human_wins.to_f).round(2) }
-      @@percentage_of_human_winning_words
+      @@computer_losing_word_occurance[computer.choice] += 1
+      @@computer_losing_word_occurance.map { |key, value| @@percentage_of_computer_losing_words[key] = (value/@@human_wins.to_f).round(2) }
     end
+    @@percentage_of_computer_losing_words
   end
 
   def set_previous_moves
@@ -223,9 +253,20 @@ class RPSGame
     @@computer_moves["Game #{@@round_counter}"] = computer.choice
   end
 
-  def reset_score
+  def reset_game
     human.reset_score
     computer.reset_score
+    @@human_moves = Hash.new(0)
+    @@computer_moves = Hash.new(0)
+    @@round_counter = 1
+    @@human_wins = 0
+    @@computer_losing_word_occurance = Hash.new(0)
+    @@percentage_of_computer_losing_words = Hash.new(0)
+    computer.weighted_values = {'rock' => 0.20,
+                                'paper' => 0.20,
+                                'scissors' => 0.20,
+                                'spock' => 0.20,
+                                'lizard' => 0.20}
   end
 
   def gameplay
@@ -247,13 +288,7 @@ class RPSGame
     display_welcome_message
 
     loop do
-      reset_score
-      @@human_moves = Hash.new(0)
-      @@computer_moves = Hash.new(0)
-      @@round_counter = 1
-      @@human_wins = 0
-      @@human_winning_word_occurance = Hash.new(0)
-      @@percentage_of_human_winning_words = Hash.new(0)
+      reset_game
       loop do
         gameplay
         break if human.score == WINNING_SCORE || computer.score == WINNING_SCORE

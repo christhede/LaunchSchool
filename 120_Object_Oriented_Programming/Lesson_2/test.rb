@@ -1,44 +1,18 @@
-# require 'pry'
-# class Randomizer
+def weighted_random_selection
+  values = {'rock' => 0.20,
+          'paper' => 0.20,
+          'scissors' => 0.10, 
+          'spock' => 0.20,
+          'lizard' => 0.20}
 
-#   def initialize(input)
-#     @arr = input
-#     @sums = []
-#     @arr.each_with_index { |x, i| @sums << (@sums.last || 0) + @arr[i][:pct] }
-#     binding.pry
-#   end
-
-#   def draw
-#     rand = Random.rand()
-
-#     for i in 1..(@sums.length)
-#       return @arr[i][:word] if rand <= @sums[i]
-#     end
-#   end
-# end
-
-class Randomizer
-  attr_accessor :array_of_moves
-
-  def initialize(array)
-    @array_of_moves = array
-  end
-
-  def change_value(name, pct)
-    @@new_pct = (1-pct)/4.0
-    @@exempt_name = name
-    self.array_of_moves[name] = pct
-    change_other_percentages
-  end
-
-  def change_other_percentages
-    self.array_of_moves.keys.map { |word| array_of_moves[word] = @@new_pct unless word == @@exempt_name}
+  total_weight = values.values.sum
+  random_weight = rand(0.0..total_weight)
+  p random_weight
+  values.each do |item, weight|
+    random_weight = random_weight - weight
+    p random_weight
+    break item if random_weight <= 0
   end
 end
 
-
-list = Randomizer.new({'rock' => 0.20, 'paper' => 0.20, 'scissors' => 0.20, 'spock' => 0.20, 'lizard' => 0.20})
-
-puts list.array_of_moves
-puts list.change_value('rock', 0.45)
-puts list.array_of_moves
+p weighted_random_selection
