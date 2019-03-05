@@ -1,18 +1,14 @@
-def weighted_random_selection
-  values = {'rock' => 0.20,
-          'paper' => 0.20,
-          'scissors' => 0.10, 
-          'spock' => 0.20,
-          'lizard' => 0.20}
+class Person
+  def name=(string)
+    @first_name = string.split[0]
+    @last_name = string.split[1]
+  end
 
-  total_weight = values.values.sum
-  random_weight = rand(0.0..total_weight)
-  p random_weight
-  values.each do |item, weight|
-    random_weight = random_weight - weight
-    p random_weight
-    break item if random_weight <= 0
+  def name
+    "#{@first_name} #{@last_name}"
   end
 end
 
-p weighted_random_selection
+person1 = Person.new
+person1.name = 'John Doe'
+puts person1.name
