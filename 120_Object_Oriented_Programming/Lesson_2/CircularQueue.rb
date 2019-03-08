@@ -108,3 +108,8 @@ puts circle
 #dequeue
 # if array.full? 
 # oldest_index += 1
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 7635641c3dae7024b6e085a434fb852ffa3f6c8a
