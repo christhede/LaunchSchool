@@ -1,4 +1,4 @@
-class CircularQueue
+	class CircularQueue
   @oldest_index = 0
   STAR = '*'
   
