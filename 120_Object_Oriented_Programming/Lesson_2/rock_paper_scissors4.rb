@@ -2,7 +2,13 @@ require 'pry'
 
 LINE_BREAK = "————————————"
 FIREWORKS = "************"
-WINNING_SCORE = 10
+WINNING_SCORE = 2
+
+module Tools
+  def prompt(message)
+    puts "=> #{message}"
+  end
+end
 
 class Rock
   def compare(other_move)
@@ -35,8 +41,11 @@ class Spock
 end
 
 class Player
+  include Tools
   attr_accessor :move, :name, :score, :choice, :weighted_values
   VALUES = ['rock', 'paper', 'scissors', 'spock', 'lizard']
+  CHOICES = ['rock', 'r', 'paper', 'p', 'scissors',
+             'sc', 'spock', 'sp', 'lizard', 'l']
 
   def initialize
     @score = 0
@@ -47,30 +56,41 @@ class Human < Player
   def set_name
     n = nil
     loop do
-      puts "What's your name?"
+      prompt "What's your name?"
       n = gets.chomp
       break unless n.empty?
 
-      puts "Please tell me your name"
+      prompt "Please tell me your name"
     end
     self.name = n
   end
 
   def choose
-    self.choice = nil
     choices = Player::VALUES.map(&:capitalize)
     loop do
-      puts "Please choose one: #{choices.to_s.gsub(/["'\[\]]/, '')}"
+      prompt "Please choose one: #{choices.to_s.gsub(/["'\[\]]/, '')}"
       self.choice = gets.chomp.downcase
-      break if Player::VALUES.include? choice
+      break if CHOICES.include? choice
 
-      puts "Sorry, invalid choice"
+      prompt "Sorry, invalid choice"
+      sleep(1)
     end
-    selected_choice(choice)
+    selected_choice(selected_name(choice))
   end
 
-  def selected_choice(choice)
-    case choice
+  def selected_name(pick)
+    case pick
+    when 'rock', 'r'        then self.choice = 'rock'
+    when 'paper', 'p'       then self.choice = 'paper'
+    when 'scissors', 'sc'   then self.choice = 'scissors'
+    when 'lizard', 'l'      then self.choice = 'lizard'
+    when 'spock', 'sp'      then self.choice = 'spock'
+    end
+    choice
+  end
+
+  def selected_choice(pick)
+    case pick
     when 'rock'     then self.move = Rock.new
     when 'paper'    then self.move = Paper.new
     when 'scissors' then self.move = Scissors.new
@@ -97,9 +117,9 @@ class Computer < Player
   # computer chooses a player with different strenghts
   def choose_player
     case @name
-    when 'R2D2' then rtwodtwo
-    when 'Hal' then hal
-    when 'Chappie' then chappie
+    when 'R2D2'     then rtwodtwo
+    when 'Hal'      then hal
+    when 'Chappie'  then chappie
     end
   end
 
@@ -161,6 +181,7 @@ end
 
 # Game Orchestration Engine
 class RPSGame
+  include Tools
   attr_accessor :human, :computer
 
   def initialize
@@ -168,46 +189,56 @@ class RPSGame
     @computer = Computer.new
   end
 
-  def game_count
-    puts "Game #{@@round_counter}"
+  def display_game_count
+    prompt "Game #{@@round_counter}"
     puts LINE_BREAK
   end
 
   def display_welcome_message
-    puts "Welcome to Rock, Paper, Scissors!"
+    prompt "Welcome to Rock, Paper, Scissors!"
     human.set_name
     computer.choose_player
-    puts "Welcome #{human.name}, let's get started."
+    prompt "Welcome #{human.name}, let's get started."
     sleep(1)
   end
 
   def display_goodbye_message
-    puts "Thanks for playing Rock, Paper, Scissors. Goodbye!"
+    prompt "Thanks for playing Rock, Paper, Scissors #{human.name}. Goodbye!"
+    sleep(1)
   end
 
   def display_moves
-    puts "#{human.name} chose: #{human.choice}"
-    puts "#{computer.name} chose: #{computer.choice}"
+    prompt "#{human.name} chose: #{human.choice}"
+    sleep(1)
+    prompt "#{computer.name} chose: #{computer.choice}"
     sleep(1)
   end
 
   def display_score
-    puts "First one to #{WINNING_SCORE} wins."
-    puts "#{human.name}: #{human.score}"
-    puts "#{computer.name}: #{computer.score}"
+    prompt "First one to #{WINNING_SCORE} wins."
+    prompt "#{human.name}: #{human.score}"
+    prompt "#{computer.name}: #{computer.score}"
     puts LINE_BREAK
+  end
+
+  def human_won
+    prompt "#{human.name} won!"
+    @@winner = 'human'
+  end
+
+  def computer_won
+    prompt "#{computer.name} won!"
+    @@winner = 'computer'
   end
 
   def display_winner
     @@winner = nil
     if human.move.compare(computer.move)
-      puts "#{human.name} won!"
-      @@winner = 'human'
+      human_won
     elsif computer.move.compare(human.move)
-      puts "#{computer.name} won!"
-      @@winner = 'computer'
+      computer_won
     else
-      puts "It's a tie."
+      prompt "It's a tie."
     end
     sleep(1)
   end
@@ -223,89 +254,93 @@ class RPSGame
   def display_game_winner
     puts FIREWORKS
     if human.score == WINNING_SCORE
-      puts "#{human.name} won the game!"
+      prompt "#{human.name} won the game!"
     else
-      puts "#{computer.name} won the game!"
+      prompt "#{computer.name} won the game!"
     end
-    puts "Player: #{human.score}"
-    puts "Computer: #{computer.score}"
+    prompt "Player: #{human.score}"
+    prompt "Computer: #{computer.score}"
   end
 
   def play_again?
     answer = nil
 
     loop do
-      puts "would you like to play again? (y/n)"
-      answer = gets.chomp
-      break if ['y', 'n'].include? answer.downcase
+      prompt "would you like to play again? (yes/no)"
+      answer = gets.chomp.downcase
+      break if ['y', 'n', 'yes', 'no'].include? answer.downcase
 
-      puts "Sorry, invalid answer"
+      prompt "Sorry, invalid answer"
+      sleep(1)
     end
 
-    answer.downcase == "y"
+    ['y', 'yes'].include? answer.downcase
   end
 
   def display_previous_moves
-    puts "Previous moves:"
-    display_human_moves = @@human_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
-    display_comp_moves = @@computer_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
+    # binding.pry
+    prompt "Previous moves:"
+    dis_human_moves = @@human_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
+    dis_comp_moves = @@comp_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
+
     if @@round_counter > 1
-      puts "#{human.name}: #{display_human_moves}"
-      puts "#{computer.name}: #{display_comp_moves}"
+      prompt "#{human.name}: #{dis_human_moves}"
+      prompt "#{computer.name}: #{dis_comp_moves}"
     end
-    list_of_computer_losing_words
-    p @@percentage_of_computer_losing_words
-    change_weight_of_computer_choices
+    configure_computer_losing_words
+    weight_of_computer_choices
     puts LINE_BREAK
   end
 
-  def change_weight_of_computer_choices
-    item = @@percentage_of_computer_losing_words.select do |_, weight|
-      weight >= 0.50 && @@human_wins >= 3
-    end
-    if item.keys[0]
-      computer.weighted_values.keys.map do |key|
-        if key == item.keys[0]
-          computer.weighted_values[key] = 0.10
-        else
-          computer.weighted_values[key] = 0.225 unless key == item[0]
-        end
+  def change_computer_weights
+    computer.weighted_values.keys.map do |key|
+      if key == item.keys[0]
+        computer.weighted_values[key] = 0.10
+      else
+        computer.weighted_values[key] = 0.225 unless key == item[0]
       end
     end
-    p computer.weighted_values
   end
 
-  def list_of_computer_losing_words
+  def weight_of_computer_choices
+    item = @@perc_comp_losing_words.select do |_, weight|
+      weight >= 0.50 && @@human_wins >= 3
+    end
+    change_computer_weights if item.keys[0]
+    computer.weighted_values
+  end
+
+  def configure_computer_losing_words
     if @@winner == 'human'
       @@human_wins += 1
       @@computer_losing_word_occurance[computer.choice] += 1
       @@computer_losing_word_occurance.map do |key, value|
-        @@percentage_of_computer_losing_words[key] = (value / @@human_wins.to_f).round(2)
+        @@perc_comp_losing_words[key] = (value / @@human_wins.to_f).round(2)
       end
     end
-    @@percentage_of_computer_losing_words
+    @@perc_comp_losing_words
   end
 
   def set_previous_moves
     @@human_moves["Game #{@@round_counter}"] = human.choice
-    @@computer_moves["Game #{@@round_counter}"] = computer.choice
+    @@comp_moves["Game #{@@round_counter}"] = computer.choice
   end
 
   def reset_game
     human.reset_score
     computer.reset_score
     @@human_moves = Hash.new(0)
-    @@computer_moves = Hash.new(0)
+    @@comp_moves = Hash.new(0)
     @@round_counter = 1
     @@human_wins = 0
     @@computer_losing_word_occurance = Hash.new(0)
-    @@percentage_of_computer_losing_words = Hash.new(0)
+    @@perc_comp_losing_words = Hash.new(0)
     computer.set_name
   end
 
   def gameplay
     system("clear")
-    game_count
+    display_game_count
     display_score
     display_previous_moves if @@round_counter > 1
     human.choose
