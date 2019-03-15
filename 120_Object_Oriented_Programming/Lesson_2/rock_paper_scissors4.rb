@@ -1,12 +1,81 @@
-require 'pry'
-
 LINE_BREAK = "————————————"
 FIREWORKS = "************"
-WINNING_SCORE = 2
+WINNING_SCORE = 10
 
 module Tools
   def prompt(message)
     puts "=> #{message}"
+  end
+end
+
+module Displayable
+  def display_player_won
+    prompt "#{human.name} won!"
+  end
+
+  def display_computer_won
+    prompt "#{computer.name} won!"
+  end
+
+  def display_previous_moves
+    prompt "Previous moves:"
+    dis_human_moves = @human_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
+    dis_comp_moves = @comp_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
+
+    if @round_counter > 1
+      prompt "#{human.name}: #{dis_human_moves}"
+      prompt "#{computer.name}: #{dis_comp_moves}"
+    end
+    configure_computer_losing_words
+    weight_of_computer_choices
+    puts LINE_BREAK
+  end
+
+  def player_won_match?
+    human.score == WINNING_SCORE
+  end
+
+  def display_game_winner
+    puts FIREWORKS
+    if player_won_match?
+      prompt "#{human.name} won the game!"
+    else
+      prompt "#{computer.name} won the game!"
+    end
+    prompt "Player: #{human.score}"
+    prompt "Computer: #{computer.score}"
+  end
+
+  def display_game_count
+    prompt "Game #{@round_counter}"
+    puts LINE_BREAK
+  end
+
+  def display_welcome_message
+    prompt "Welcome to Rock, Paper, Scissors!"
+    human.set_name
+    computer.choose_player
+    prompt "Welcome #{human.name}, let's get started."
+    sleep(1)
+  end
+
+  def display_goodbye_message
+    prompt "Thanks for playing Rock, Paper, Scissors #{human.name}. Goodbye!"
+    sleep(1)
+  end
+
+  def display_moves
+    prompt "#{human.name} chose: #{human.choice}"
+    sleep(1)
+    prompt "#{computer.name} chose: #{computer.choice}"
+    sleep(1)
+  end
+
+  def display_score
+    prompt "First one to #{WINNING_SCORE} wins."
+    prompt "#{human.name}: #{human.score}"
+    prompt "#{computer.name}: #{computer.score}"
+    puts LINE_BREAK
   end
 end
 
@@ -49,6 +118,14 @@ class Player
 
   def initialize
     @score = 0
+  end
+
+  def add_score
+    self.score += 1
+  end
+
+  def reset_score
+    self.score = 0
   end
 end
 
@@ -97,14 +174,6 @@ class Human < Player
     when 'lizard'   then self.move = Lizard.new
     when 'spock'    then self.move = Spock.new
     end
-  end
-
-  def add_score
-    self.score += 1
-  end
-
-  def reset_score
-    self.score = 0
   end
 end
 
@@ -169,104 +238,66 @@ class Computer < Player
       break item if random_weight <= 0
     end
   end
-
-  def add_score
-    self.score += 1
-  end
-
-  def reset_score
-    self.score = 0
-  end
 end
 
 # Game Orchestration Engine
 class RPSGame
   include Tools
+  include Displayable
   attr_accessor :human, :computer
 
   def initialize
     @human = Human.new
     @computer = Computer.new
+    @winner = nil
+    @human_moves = Hash.new(0)
+    @comp_moves = Hash.new(0)
+    @round_counter = 1
+    @human_wins = 0
+    @computer_losing_word_occurance = Hash.new(0)
+    @perc_comp_losing_words = Hash.new(0)
   end
 
-  def display_game_count
-    prompt "Game #{@@round_counter}"
-    puts LINE_BREAK
+  def player_won?
+    human.move.compare(computer.move)
   end
 
-  def display_welcome_message
-    prompt "Welcome to Rock, Paper, Scissors!"
-    human.set_name
-    computer.choose_player
-    prompt "Welcome #{human.name}, let's get started."
-    sleep(1)
-  end
-
-  def display_goodbye_message
-    prompt "Thanks for playing Rock, Paper, Scissors #{human.name}. Goodbye!"
-    sleep(1)
-  end
-
-  def display_moves
-    prompt "#{human.name} chose: #{human.choice}"
-    sleep(1)
-    prompt "#{computer.name} chose: #{computer.choice}"
-    sleep(1)
-  end
-
-  def display_score
-    prompt "First one to #{WINNING_SCORE} wins."
-    prompt "#{human.name}: #{human.score}"
-    prompt "#{computer.name}: #{computer.score}"
-    puts LINE_BREAK
-  end
-
-  def human_won
-    prompt "#{human.name} won!"
-    @@winner = 'human'
-  end
-
-  def computer_won
-    prompt "#{computer.name} won!"
-    @@winner = 'computer'
+  def computer_won?
+    computer.move.compare(human.move)
   end
 
   def display_winner
-    @@winner = nil
-    if human.move.compare(computer.move)
-      human_won
-    elsif computer.move.compare(human.move)
-      computer_won
+    if player_won?
+      display_player_won
+    elsif computer_won?
+      display_computer_won
     else
       prompt "It's a tie."
     end
     sleep(1)
   end
 
-  def award_point_to_winner
-    if human.move.compare(computer.move)
-      human.add_score
-    elsif computer.move.compare(human.move)
-      computer.add_score
+  def assign_winner
+    if player_won?
+      @winner = 'human'
+    elsif computer_won?
+      @winner = 'computer'
     end
   end
 
-  def display_game_winner
-    puts FIREWORKS
-    if human.score == WINNING_SCORE
-      prompt "#{human.name} won the game!"
-    else
-      prompt "#{computer.name} won the game!"
+  def award_point_to_winner
+    if player_won?
+      human.add_score
+    elsif computer_won?
+      computer.add_score
     end
-    prompt "Player: #{human.score}"
-    prompt "Computer: #{computer.score}"
   end
 
   def play_again?
     answer = nil
 
     loop do
-      prompt "would you like to play again? (yes/no)"
+      prompt "Would you like to play again? (yes/no)"
       answer = gets.chomp.downcase
       break if ['y', 'n', 'yes', 'no'].include? answer.downcase
 
@@ -275,21 +306,6 @@ class RPSGame
     end
 
     ['y', 'yes'].include? answer.downcase
-  end
-
-  def display_previous_moves
-    # binding.pry
-    prompt "Previous moves:"
-    dis_human_moves = @@human_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
-    dis_comp_moves = @@comp_moves.to_s.gsub(/[\{\}\"]/, '').gsub('=>', ' => ')
-
-    if @@round_counter > 1
-      prompt "#{human.name}: #{dis_human_moves}"
-      prompt "#{computer.name}: #{dis_comp_moves}"
-    end
-    configure_computer_losing_words
-    weight_of_computer_choices
-    puts LINE_BREAK
   end
 
   def change_computer_weights
@@ -303,57 +319,57 @@ class RPSGame
   end
 
   def weight_of_computer_choices
-    item = @@perc_comp_losing_words.select do |_, weight|
-      weight >= 0.50 && @@human_wins >= 3
+    item = @perc_comp_losing_words.select do |_, weight|
+      weight >= 0.50 && @human_wins >= 3
     end
     change_computer_weights if item.keys[0]
     computer.weighted_values
   end
 
   def configure_computer_losing_words
-    if @@winner == 'human'
-      @@human_wins += 1
-      @@computer_losing_word_occurance[computer.choice] += 1
-      @@computer_losing_word_occurance.map do |key, value|
-        @@perc_comp_losing_words[key] = (value / @@human_wins.to_f).round(2)
+    if @winner == 'human'
+      @human_wins += 1
+      @computer_losing_word_occurance[computer.choice] += 1
+      @computer_losing_word_occurance.map do |key, value|
+        @perc_comp_losing_words[key] = (value / @human_wins.to_f).round(2)
       end
     end
-    @@perc_comp_losing_words
+    @perc_comp_losing_words
   end
 
   def set_previous_moves
-    @@human_moves["Game #{@@round_counter}"] = human.choice
-    @@comp_moves["Game #{@@round_counter}"] = computer.choice
+    @human_moves["Game #{@round_counter}"] = human.choice
+    @comp_moves["Game #{@round_counter}"] = computer.choice
   end
 
   def reset_game
     human.reset_score
     computer.reset_score
-    @@human_moves = Hash.new(0)
-    @@comp_moves = Hash.new(0)
-    @@round_counter = 1
-    @@human_wins = 0
-    @@computer_losing_word_occurance = Hash.new(0)
-    @@perc_comp_losing_words = Hash.new(0)
+    @human_moves = Hash.new(0)
+    @comp_moves = Hash.new(0)
+    @round_counter = 1
+    @human_wins = 0
+    @computer_losing_word_occurance = Hash.new(0)
+    @perc_comp_losing_words = Hash.new(0)
     computer.set_name
   end
 
   def gameplay
-    system("clear")
+    system('clear')
     display_game_count
     display_score
-    display_previous_moves if @@round_counter > 1
+    display_previous_moves if @round_counter > 1
     human.choose
     computer.choose
     display_moves
     display_winner
     award_point_to_winner
     set_previous_moves
-    @@round_counter += 1
+    @round_counter += 1
   end
 
   def play
-    system("clear")
+    system('clear')
     display_welcome_message
 
     loop do
