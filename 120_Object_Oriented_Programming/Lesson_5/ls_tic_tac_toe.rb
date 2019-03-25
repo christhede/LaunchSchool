@@ -1,5 +1,3 @@
-require 'pry'
-
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # cols
@@ -18,23 +16,11 @@ class Board
     @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
-  def joinor(array, punc = ', ', conj = 'or')
-    array.map do |num|
-      if array.size == 1
-        "#{num}"
-      elsif num == array[-1]
-        "#{conj} #{num.to_s}"
-      else
-        "#{num.to_s}#{punc}"
-      end
-    end.join
-  end
-
   def full?
     unmarked_keys.empty?
   end
 
-  def someone_won_game?
+  def someone_won?
     !!winning_marker
   end
 
@@ -75,7 +61,6 @@ class Board
     return false if markers.size != 3
     markers.min == markers.max
   end
-
 end
 
 class Square
@@ -102,11 +87,9 @@ end
 
 class Player
   attr_reader :marker
-  attr_accessor :score
 
   def initialize(marker)
     @marker = marker
-    @score = 0
   end
 end
 
@@ -114,7 +97,6 @@ class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
   FIRST_TO_MOVE = HUMAN_MARKER
-  WINNING_SCORE = 2
 
   attr_reader :board, :human, :computer
 
@@ -128,29 +110,23 @@ class TTTGame
   def play
     clear
     display_welcome_message
+
     loop do
-      reset_score
-      board_reset
+      display_board
 
       loop do
-        display_board
-        loop do
-          current_player_moves
-          break if board.someone_won_game? || board.full?
-          clear_screen_and_display_board
-        end
-
-        winner_awarded_point
-        display_result
-        break if someone_won_match?
-        board_reset
-        display_play_again_message
+        current_player_moves
+        break if board.someone_won? || board.full?
+        clear_screen_and_display_board
       end
 
-      display_match_winner
+      display_result
       break unless play_again?
-      display_goodbye_message
+      reset
+      display_play_again_message
     end
+
+    display_goodbye_message
   end
 
   private
@@ -175,46 +151,13 @@ class TTTGame
 
   def display_board
     puts "You're a #{human.marker}. Computer is a #{computer.marker}."
-    puts "First one to #{WINNING_SCORE} wins the game"
-    display_score 
+    puts ""
     board.draw
     puts ""
   end
 
-  def someone_won_match?
-    human.score == WINNING_SCORE || computer.score == WINNING_SCORE
-  end
-
-  def display_match_winner
-    if human.score == WINNING_SCORE
-      puts "You won the match!"
-    else
-      puts "Computer won the match!"
-    end
-    sleep(1)
-  end
-
-  def display_score
-    puts "Score => Human: #{human.score} Computer: #{computer.score}"
-  end
-
-  def reset_score
-    human.score = 0
-    computer.score = 0
-  end
-
-  def winner_awarded_point
-    if board.winning_marker == HUMAN_MARKER
-      human.score += 1
-    elsif board.winning_marker == COMPUTER_MARKER
-      computer.score += 1
-    else
-      nil
-    end
-  end
-
   def human_moves
-    puts "Choose a square (#{board.joinor(board.unmarked_keys)}): "
+    puts "Choose a square (#{board.unmarked_keys.join(', ')}): "
     square = nil
     loop do
       square = gets.chomp.to_i
@@ -226,39 +169,7 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker unless computer_defense unless computer_offense
-  end
-
-  def computer_defense
-    Board::WINNING_LINES.each do |line|
-      squares = board.instance_variable_get(:@squares).values_at(*line)
-      if two_human_markers_one_empty?(squares)
-        empty_square = line.select { |x| board.unmarked_keys.include? x }
-        return board[empty_square[0]] = computer.marker
-      end
-    end
-    nil
-  end
-
-  def two_human_markers_one_empty?(squares)
-    squares.select(&:marked?).collect(&:marker).count(COMPUTER_MARKER) == 0 &&
-    squares.select(&:marked?).collect(&:marker).count(HUMAN_MARKER) == 2
-  end
-
-  def computer_offense
-    Board::WINNING_LINES.each do |line|
-      squares = board.instance_variable_get(:@squares).values_at(*line)
-      if two_computer_markers_one_empty?(squares)
-        empty_square = line.select { |x| board.unmarked_keys.include? x }
-        return board[empty_square[0]] = computer.marker
-      end
-    end
-    nil
-  end
-
-  def two_computer_markers_one_empty?(squares)
-    squares.select(&:marked?).collect(&:marker).count(COMPUTER_MARKER) == 2 &&
-    squares.select(&:marked?).collect(&:marker).count(HUMAN_MARKER) == 0
+    board[board.unmarked_keys.sample] = computer.marker
   end
 
   def current_player_moves
@@ -280,9 +191,8 @@ class TTTGame
     when computer.marker
       puts "Computer won!"
     else
-      puts "It's a tie."
+      puts "It's a tie!"
     end
-    sleep(1)
   end
 
   def play_again?
@@ -301,7 +211,7 @@ class TTTGame
     system "clear"
   end
 
-  def board_reset
+  def reset
     board.reset
     @current_marker = FIRST_TO_MOVE
     clear
