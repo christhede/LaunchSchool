@@ -21,11 +21,11 @@ class Board
   def joinor(array, punc = ', ', conj = 'or')
     array.map do |num|
       if array.size == 1
-        "#{num}"
+        num.to_s
       elsif num == array[-1]
-        "#{conj} #{num.to_s}"
+        "#{conj} #{num}"
       else
-        "#{num.to_s}#{punc}"
+        "#{num}#{punc}"
       end
     end.join
   end
@@ -73,9 +73,9 @@ class Board
   def three_identical_markers?(squares)
     markers = squares.select(&:marked?).collect(&:marker)
     return false if markers.size != 3
+
     markers.min == markers.max
   end
-
 end
 
 class Square
@@ -101,28 +101,26 @@ class Square
 end
 
 class Player
-  attr_reader :marker
-  attr_accessor :score
+  attr_accessor :score, :name, :marker
 
-  def initialize(marker)
+  def initialize(name, marker)
     @marker = marker
+    @name = name
     @score = 0
   end
 end
 
 class TTTGame
-  HUMAN_MARKER = "X"
-  COMPUTER_MARKER = "O"
-  FIRST_TO_MOVE = HUMAN_MARKER
+  LINE_BREAK = '---------------'.freeze
   WINNING_SCORE = 2
 
-  attr_reader :board, :human, :computer
+  attr_accessor :board, :human, :computer
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
-    @computer = Player.new(COMPUTER_MARKER)
-    @current_marker = FIRST_TO_MOVE
+    @human = Player.new(human_chooses_name, human_chooses_marker)
+    @computer = Player.new(computer_chooses_name, computer_chooses_marker)
+    @current_marker = nil
   end
 
   def play
@@ -132,36 +130,69 @@ class TTTGame
       reset_score
       board_reset
 
-      loop do
-        display_board
-        loop do
-          current_player_moves
-          break if board.someone_won_game? || board.full?
-          clear_screen_and_display_board
-        end
-
-        winner_awarded_point
-        display_result
-        break if someone_won_match?
-        board_reset
-        display_play_again_message
-      end
+      main_game_loop
 
       display_match_winner
       break unless play_again?
+
       display_goodbye_message
     end
+  end
+
+  def main_game_loop
+    loop do
+      display_board
+      loop do
+        current_player_moves
+        break if board.someone_won_game? || board.full?
+
+        clear_screen_and_display_board
+      end
+
+      winner_awarded_point
+      display_result
+      break if someone_won_match?
+
+      board_reset
+      display_play_again_message
+    end
+  end
+
+  def human_chooses_name
+    clear
+    puts "What is your name?"
+    gets.chomp.capitalize
+  end
+
+  def computer_chooses_name
+    %w(R2D2 C3PO Chappie).sample
+  end
+
+  def human_chooses_marker
+    loop do
+      puts "Please choose your marker."
+      marker = gets.chomp
+      break marker if marker.to_s.size == 1
+
+      puts "Sorry, marker must be one character long"
+    end
+  end
+
+  def computer_chooses_marker
+    str = %w(& % $ # @ ! ^ * ? ~)
+    str.delete(human.marker)
+    str.sample
   end
 
   private
 
   def display_welcome_message
-    puts "Welcome to Tic Tac Toe!"
-    puts ""
+    puts "Welcome to Tic Tac Toe #{human.name}!"
+    sleep(1)
   end
 
   def display_goodbye_message
-    puts "Thanks for playing Tic Tac Toe! Goodbye!"
+    puts "Thanks for playing Tic Tac Toe #{human.name}! Goodbye!"
   end
 
   def clear_screen_and_display_board
@@ -169,14 +200,13 @@ class TTTGame
     display_board
   end
 
-  def human_turn?
-    @current_marker == HUMAN_MARKER
-  end
-
   def display_board
+    puts "#{human.name} VS #{computer.name}"
+    puts LINE_BREAK
     puts "You're a #{human.marker}. Computer is a #{computer.marker}."
     puts "First one to #{WINNING_SCORE} wins the game"
-    display_score 
+    puts LINE_BREAK
+    display_score
     board.draw
     puts ""
   end
@@ -204,12 +234,10 @@ class TTTGame
   end
 
   def winner_awarded_point
-    if board.winning_marker == HUMAN_MARKER
+    if board.winning_marker == human.marker
       human.score += 1
-    elsif board.winning_marker == COMPUTER_MARKER
+    elsif board.winning_marker == computer.marker
       computer.score += 1
-    else
-      nil
     end
   end
 
@@ -219,6 +247,7 @@ class TTTGame
     loop do
       square = gets.chomp.to_i
       break if board.unmarked_keys.include?(square)
+
       puts "Sorry, that's not a valid choice."
     end
 
@@ -226,7 +255,14 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker unless computer_defense unless computer_offense
+    sleep(1)
+    if !!computer_offense
+      computer_offense
+    elsif !!computer_defense
+      computer_defense
+    else
+      board[board.unmarked_keys.sample] = computer.marker
+    end
   end
 
   def computer_defense
@@ -241,8 +277,8 @@ class TTTGame
   end
 
   def two_human_markers_one_empty?(squares)
-    squares.select(&:marked?).collect(&:marker).count(COMPUTER_MARKER) == 0 &&
-    squares.select(&:marked?).collect(&:marker).count(HUMAN_MARKER) == 2
+    squares.select(&:marked?).collect(&:marker).count(computer.marker).zero? &&
+      squares.select(&:marked?).collect(&:marker).count(human.marker) == 2
   end
 
   def computer_offense
@@ -257,17 +293,21 @@ class TTTGame
   end
 
   def two_computer_markers_one_empty?(squares)
-    squares.select(&:marked?).collect(&:marker).count(COMPUTER_MARKER) == 2 &&
-    squares.select(&:marked?).collect(&:marker).count(HUMAN_MARKER) == 0
+    squares.select(&:marked?).collect(&:marker).count(computer.marker) == 2 &&
+      squares.select(&:marked?).collect(&:marker).count(human.marker).zero?
+  end
+
+  def human_turn?
+    @current_marker == human.marker
   end
 
   def current_player_moves
     if human_turn?
       human_moves
-      @current_marker = COMPUTER_MARKER
+      @current_marker = computer.marker
     else
       computer_moves
-      @current_marker = HUMAN_MARKER
+      @current_marker = human.marker
     end
   end
 
@@ -291,6 +331,7 @@ class TTTGame
       puts "Would you like to play again? (y/n)"
       answer = gets.chomp.downcase
       break if %w(y n).include? answer
+
       puts "Sorry, must be y or n"
     end
 
@@ -303,7 +344,7 @@ class TTTGame
 
   def board_reset
     board.reset
-    @current_marker = FIRST_TO_MOVE
+    @current_marker = [human.marker, computer.marker].sample
     clear
   end
 
