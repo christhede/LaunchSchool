@@ -1,5 +1,3 @@
-require 'pry'
-
 module Tools
   LINE_BREAK = '-----------------'
 
@@ -14,6 +12,7 @@ end
 
 module Hand
   include Tools
+
   def add_card_to_hand(card)
     cards << card
     update_total
@@ -51,10 +50,10 @@ module Hand
 
   def display_hand(first_card = nil)
     if first_card
-      puts "#{self.name}'s top card:"
+      puts "#{name}'s top card:"
       prompt cards[0].join(' of ')
     else
-      puts "#{self.name}'s cards:"
+      puts "#{name}'s cards:"
       cards.each { |card| prompt card.join(' of ') }
     end
     puts LINE_BREAK
@@ -62,9 +61,9 @@ module Hand
 
   def display_total(first_card = nil)
     if first_card
-      puts "#{self.name}'s top card value: #{@array_of_values[0]}"
+      puts "#{name}'s top card value: #{@array_of_values[0]}"
     else
-      puts "#{self.name}'s hand value: #{total}"
+      puts "#{name}'s hand value: #{total}"
     end
   end
 end
@@ -176,13 +175,9 @@ class TwentyOne
     2.times { player.cards << deal_card }
   end
 
+  # deleting random card from deck and returning that card
   def deal_card
-    deck.of_cards.delete(deck.of_cards.sample) # deleting random card from deck and returning that card to hand
-  end
-
-  def update_total
-    player.update_total
-    dealer.update_total
+    deck.of_cards.delete(deck.of_cards.sample)
   end
 
   def display_cards(first_card = nil)
@@ -195,6 +190,12 @@ class TwentyOne
     puts LINE_BREAK
   end
 
+  def update_total
+    player.update_total
+    dealer.update_total
+  end
+
+  # rubocop:disable Metrics/LineLength
   def player_turn
     return if player.blackjack?
 
@@ -202,18 +203,10 @@ class TwentyOne
       prompt "Would you like to hit or stay?"
       player_responses
       break if (['stay', 's'].include? @player_response) || player.busted? || player.blackjack?
-
     end
     sleep(1)
   end
-
-  def player_hit
-    prompt "#{player.name} chose to hit"
-    player.add_card_to_hand(deal_card)
-    prompt "Dealing card..."
-    sleep(1)
-    display_cards(0)
-  end
+  # rubocop:enable Metrics/LineLength
 
   def player_responses
     @player_response = gets.chomp.downcase
@@ -224,6 +217,14 @@ class TwentyOne
     else
       prompt "That is not a valid answer. Please choose hit, or stay"
     end
+  end
+
+  def player_hit
+    prompt "#{player.name} chose to hit"
+    player.add_card_to_hand(deal_card)
+    prompt "Dealing card..."
+    sleep(1)
+    display_cards(0)
   end
 
   def dealer_turn
@@ -244,19 +245,7 @@ class TwentyOne
 
   def display_results
     display_cards
-    if player.busted?
-      prompt "#{player.name} busted!"
-    elsif dealer.busted?
-      prompt "#{dealer.name} busted!"
-    elsif dealer.blackjack? && player.blackjack?
-      prompt "It's a tie/push"
-    elsif player.blackjack?
-      prompt "#{player.name} Blackjack!"
-    elsif dealer.blackjack?
-      prompt "#{dealer.name} Blackjack!"
-    else
-      display_total_comparison
-    end
+    display_total_comparison unless display_if_busted || display_if_blackjack
     LINE_BREAK
   end
 
@@ -267,6 +256,29 @@ class TwentyOne
       prompt "#{player.name} won!"
     else
       prompt "#{dealer.name} won!"
+    end
+  end
+
+  def display_if_busted
+    if player.busted?
+      prompt "#{player.name} busted!"
+      true
+    elsif dealer.busted?
+      prompt "#{dealer.name} busted!"
+      true
+    end
+  end
+
+  def display_if_blackjack
+    if dealer.blackjack? && player.blackjack?
+      prompt "It's a tie/push"
+      true
+    elsif player.blackjack?
+      prompt "#{player.name} Blackjack!"
+      true
+    elsif dealer.blackjack?
+      prompt "#{dealer.name} Blackjack!"
+      true
     end
   end
 
@@ -286,7 +298,7 @@ class TwentyOne
   def display_goodbye_message
     prompt "Thanks for playing Twenty One #{player.name}!"
     prompt "Come back soon now."
-    sleep(1)  
+    sleep(1)
   end
 end
 
