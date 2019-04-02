@@ -1,3 +1,5 @@
+require 'pry'
+
 module Tools
   LINE_BREAK = '-----------------'
 
@@ -9,6 +11,8 @@ module Tools
     puts "=> #{message}"
   end
 end
+
+#/////////////////////////////////////////////////////////////
 
 module Hand
   include Tools
@@ -68,6 +72,8 @@ module Hand
   end
 end
 
+#/////////////////////////////////////////////////////////////
+
 class Participant
   include Hand
   include Tools
@@ -87,7 +93,16 @@ class Participant
   def blackjack?
     self.total == 21
   end
+
+  def hit(card)
+    prompt "#{self.name} chose to hit"
+    add_card_to_hand(card)
+    prompt "Dealing card..."
+    sleep(1)
+  end
 end
+
+#/////////////////////////////////////////////////////////////
 
 class Player < Participant
   def set_name
@@ -100,13 +115,35 @@ class Player < Participant
       prompt "I'm sorry, but you must have a name!"
     end
   end
+
+  def hit_or_stay
+    loop do
+      # binding.pry
+      prompt "Would you like to hit or stay?"
+      @answer = gets.chomp.downcase
+      break if hit? || stay?
+      prompt "That is not a valid answer. Please choose hit, or stay"
+    end
+  end
+
+  def hit?
+    ['hit', 'h'].include? @answer
+  end
+
+  def stay?
+    ['stay', 's'].include? @answer
+  end
 end
+
+#/////////////////////////////////////////////////////////////
 
 class Dealer < Participant
   def set_name
     self.name = ['Dealer Jim', 'Shoeless Joe', 'Alberta Bill'].sample
   end
 end
+
+#/////////////////////////////////////////////////////////////
 
 class Deck
   attr_reader :of_cards
@@ -126,7 +163,14 @@ class Deck
       end
     end
   end
+
+  # deleting random card from deck and returning that card
+  def deal_card
+    of_cards.delete(of_cards.sample)
+  end
 end
+
+#/////////////////////////////////////////////////////////////
 
 class TwentyOne
   include Tools
@@ -171,13 +215,8 @@ class TwentyOne
     prompt "Dealing cards..."
     sleep(1)
     clear
-    2.times { dealer.cards << deal_card }
-    2.times { player.cards << deal_card }
-  end
-
-  # deleting random card from deck and returning that card
-  def deal_card
-    deck.of_cards.delete(deck.of_cards.sample)
+    2.times { dealer.cards << deck.deal_card }
+    2.times { player.cards << deck.deal_card }
   end
 
   def display_cards(first_card = nil)
@@ -195,53 +234,55 @@ class TwentyOne
     dealer.update_total
   end
 
-  # rubocop:disable Metrics/LineLength
   def player_turn
     return if player.blackjack?
-
+    
     loop do
-      prompt "Would you like to hit or stay?"
-      player_responses
-      break if (['stay', 's'].include? @player_response) || player.busted? || player.blackjack?
+      player.hit_or_stay
+      if player.hit?
+        player.hit(deck.deal_card)
+      else 
+        prompt "#{player.name} chose to stay"
+      end
+      break if player.stay? || player.busted? || player.blackjack?
+      display_cards(0)
     end
     sleep(1)
   end
-  # rubocop:enable Metrics/LineLength
 
-  def player_responses
-    @player_response = gets.chomp.downcase
-    if ['hit', 'h'].include? @player_response
-      player_hit
-    elsif ['stay', 's'].include? @player_response
-      prompt "#{player.name} chose to stay"
-    else
-      prompt "That is not a valid answer. Please choose hit, or stay"
-    end
-  end
+  # def player_responses
+  #   @player_response = gets.chomp.downcase
+  #   if ['hit', 'h'].include? @player_response
+  #     player_hit
+  #   elsif ['stay', 's'].include? @player_response
+  #     prompt "#{player.name} chose to stay"
+  #   else
+  #     prompt "That is not a valid answer. Please choose hit, or stay"
+  #   end
+  # end
 
-  def player_hit
-    prompt "#{player.name} chose to hit"
-    player.add_card_to_hand(deal_card)
-    prompt "Dealing card..."
-    sleep(1)
-    display_cards(0)
-  end
+  # def player_hit
+  #   prompt "#{player.name} chose to hit"
+  #   player.add_card_to_hand(deck.deal_card)
+  #   prompt "Dealing card..."
+  #   sleep(1)
+  #   display_cards(0)
+  # end
 
   def dealer_turn
     return if dealer.blackjack?
 
     until dealer.busted? || dealer.total >= 17 && dealer.total >= player.total
-      dealer_hit
+      dealer.hit(deck.deal_card)
     end
   end
 
-  def dealer_hit
-    prompt "#{dealer.name} chose to hit"
-    dealer.add_card_to_hand(deal_card)
-    prompt "Dealing card..."
-    sleep(1)
-    display_cards(0)
-  end
+  # def dealer_hit
+  #   prompt "#{dealer.name} chose to hit"
+  #   dealer.add_card_to_hand(deck.deal_card)
+  #   prompt "Dealing card..."
+  #   sleep(1)
+  # end
 
   def display_results
     display_cards
