@@ -1,6 +1,7 @@
 require 'pry'
 
 module Tools
+  BLACKJACK = 21
   LINE_BREAK = '-----------------'
 
   def clear
@@ -12,7 +13,76 @@ module Tools
   end
 end
 
-#/////////////////////////////////////////////////////////////
+module Displayable
+  include Tools
+
+  def display_welcome_message
+    prompt "Welcome to Twenty One, #{player.name}."
+    prompt "I'm #{dealer.name}, I'll be your dealer today."
+    sleep(1)
+  end
+
+  def display_cards(first_card = nil)
+    clear
+    update_total
+    player.display_hand
+    dealer.display_hand(first_card)
+    player.display_total
+    dealer.display_total(first_card)
+    puts LINE_BREAK
+  end
+
+  def display_results
+    display_cards
+    if game_end?
+      display_if_busted || display_if_blackjack
+    else
+      display_total_comparison
+    end
+    LINE_BREAK
+  end
+
+  def game_end?
+    player.busted? ||
+      player.blackjack? ||
+      dealer.busted? ||
+      dealer.blackjack?
+  end
+
+  def display_total_comparison
+    if player.total == dealer.total
+      prompt "It's a tie"
+    elsif player.total > dealer.total
+      prompt "#{player.name} won!"
+    else
+      prompt "#{dealer.name} won!"
+    end
+  end
+
+  def display_if_busted
+    if player.busted?
+      prompt "#{player.name} busted!"
+    elsif dealer.busted?
+      prompt "#{dealer.name} busted!"
+    end
+  end
+
+  def display_if_blackjack
+    if dealer.blackjack? && player.blackjack?
+      prompt "It's a tie/push"
+    elsif player.blackjack?
+      prompt "#{player.name} Blackjack!"
+    elsif dealer.blackjack?
+      prompt "#{dealer.name} Blackjack!"
+    end
+  end
+
+  def display_goodbye_message
+    prompt "Thanks for playing Twenty One #{player.name}!"
+    prompt "Come back soon now."
+    sleep(1)
+  end
+end
 
 module Hand
   include Tools
@@ -22,14 +92,17 @@ module Hand
     update_total
   end
 
+  def reset_hand
+    @array_of_values = []
+  end
+
   def update_total
     update_array_of_values
     self.total = @array_of_values.sum
-    subtract_ten if total > 21 && ace_count > 0
+    subtract_ten if total > BLACKJACK && ace_count > 0
   end
 
   def update_array_of_values
-    @array_of_values = nil
     @array_of_values = cards.map do |array|
       case array[0]
       when 'Jack'   then 10
@@ -37,7 +110,7 @@ module Hand
       when 'King'   then 10
       when 'Ace'    then 11
       else
-        array[0].to_i
+        array.first.to_i
       end
     end
   end
@@ -72,8 +145,6 @@ module Hand
   end
 end
 
-#/////////////////////////////////////////////////////////////
-
 class Participant
   include Hand
   include Tools
@@ -87,22 +158,20 @@ class Participant
   end
 
   def busted?
-    self.total > 21
+    self.total > BLACKJACK
   end
 
   def blackjack?
-    self.total == 21
+    self.total == BLACKJACK
   end
 
   def hit(card)
-    prompt "#{self.name} chose to hit"
+    prompt "#{name} chose to hit"
     add_card_to_hand(card)
     prompt "Dealing card..."
     sleep(1)
   end
 end
-
-#/////////////////////////////////////////////////////////////
 
 class Player < Participant
   def set_name
@@ -118,12 +187,13 @@ class Player < Participant
 
   def hit_or_stay
     loop do
-      # binding.pry
       prompt "Would you like to hit or stay?"
       @answer = gets.chomp.downcase
       break if hit? || stay?
+
       prompt "That is not a valid answer. Please choose hit, or stay"
     end
+    @answer
   end
 
   def hit?
@@ -135,18 +205,14 @@ class Player < Participant
   end
 end
 
-#/////////////////////////////////////////////////////////////
-
 class Dealer < Participant
   def set_name
     self.name = ['Dealer Jim', 'Shoeless Joe', 'Alberta Bill'].sample
   end
 end
 
-#/////////////////////////////////////////////////////////////
-
 class Deck
-  attr_reader :of_cards
+  attr_accessor :of_cards
 
   RANKS = %w(2 3 4 5 6 7 8 9 10 Jack Queen King Ace)
   SUITS = %w(Hearts Spades Diamonds Clubs)
@@ -170,10 +236,9 @@ class Deck
   end
 end
 
-#/////////////////////////////////////////////////////////////
-
 class TwentyOne
   include Tools
+  include Displayable
 
   attr_accessor :player, :dealer, :deck
 
@@ -188,7 +253,7 @@ class TwentyOne
     display_welcome_message
     loop do
       game_reset
-      deal_cards
+      deal_initial_hand
       display_cards(0)
       player_turn unless dealer.blackjack?
       dealer_turn unless player.busted? || player.blackjack?
@@ -200,33 +265,21 @@ class TwentyOne
 
   private
 
-  def display_welcome_message
-    prompt "Welcome to Twenty One, #{player.name}."
-    prompt "I'm #{dealer.name}, I'll be your dealer today."
-    sleep(1)
-  end
-
   def game_reset
     player.cards = []
     dealer.cards = []
+    player.reset_hand
+    dealer.reset_hand
+    deck.of_cards = []
+    deck.create_deck
   end
 
-  def deal_cards
+  def deal_initial_hand
     prompt "Dealing cards..."
     sleep(1)
     clear
     2.times { dealer.cards << deck.deal_card }
     2.times { player.cards << deck.deal_card }
-  end
-
-  def display_cards(first_card = nil)
-    clear
-    update_total
-    player.display_hand
-    dealer.display_hand(first_card)
-    player.display_total
-    dealer.display_total(first_card)
-    puts LINE_BREAK
   end
 
   def update_total
@@ -236,38 +289,20 @@ class TwentyOne
 
   def player_turn
     return if player.blackjack?
-    
+
     loop do
       player.hit_or_stay
       if player.hit?
         player.hit(deck.deal_card)
-      else 
+      else
         prompt "#{player.name} chose to stay"
       end
       break if player.stay? || player.busted? || player.blackjack?
+
       display_cards(0)
     end
     sleep(1)
   end
-
-  # def player_responses
-  #   @player_response = gets.chomp.downcase
-  #   if ['hit', 'h'].include? @player_response
-  #     player_hit
-  #   elsif ['stay', 's'].include? @player_response
-  #     prompt "#{player.name} chose to stay"
-  #   else
-  #     prompt "That is not a valid answer. Please choose hit, or stay"
-  #   end
-  # end
-
-  # def player_hit
-  #   prompt "#{player.name} chose to hit"
-  #   player.add_card_to_hand(deck.deal_card)
-  #   prompt "Dealing card..."
-  #   sleep(1)
-  #   display_cards(0)
-  # end
 
   def dealer_turn
     return if dealer.blackjack?
@@ -277,69 +312,17 @@ class TwentyOne
     end
   end
 
-  # def dealer_hit
-  #   prompt "#{dealer.name} chose to hit"
-  #   dealer.add_card_to_hand(deck.deal_card)
-  #   prompt "Dealing card..."
-  #   sleep(1)
-  # end
-
-  def display_results
-    display_cards
-    display_total_comparison unless display_if_busted || display_if_blackjack
-    LINE_BREAK
-  end
-
-  def display_total_comparison
-    if player.total == dealer.total
-      prompt "It's a tie"
-    elsif player.total > dealer.total
-      prompt "#{player.name} won!"
-    else
-      prompt "#{dealer.name} won!"
-    end
-  end
-
-  def display_if_busted
-    if player.busted?
-      prompt "#{player.name} busted!"
-      true
-    elsif dealer.busted?
-      prompt "#{dealer.name} busted!"
-      true
-    end
-  end
-
-  def display_if_blackjack
-    if dealer.blackjack? && player.blackjack?
-      prompt "It's a tie/push"
-      true
-    elsif player.blackjack?
-      prompt "#{player.name} Blackjack!"
-      true
-    elsif dealer.blackjack?
-      prompt "#{dealer.name} Blackjack!"
-      true
-    end
-  end
-
   def play_again?
     @play_again_answer = nil
     loop do
       prompt "Would you like to play again? (yes or no)"
-      @play_again_answer = gets.chomp
+      @play_again_answer = gets.chomp.downcase
       break if ['yes', 'y', 'no', 'n'].include? @play_again_answer
 
       prompt "Sorry, that is not a valid answer"
     end
     prompt "Let's play again!" if ['yes', 'y'].include? @play_again_answer
     ['yes', 'y'].include? @play_again_answer
-  end
-
-  def display_goodbye_message
-    prompt "Thanks for playing Twenty One #{player.name}!"
-    prompt "Come back soon now."
-    sleep(1)
   end
 end
 
