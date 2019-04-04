@@ -1,11 +1,48 @@
-def joinor(array, punc = ', ', conj = 'or')
-  array.map do |num|
-    num == array[-1] ? "#{conj} #{num.to_s}" : "#{num.to_s}#{punc}"
-  end.join
+class Parent
 end
 
+#/////////////////////////////////////////////////////////////
 
-p joinor([1, 2])                   # => "1 or 2"
-p joinor([1, 2, 3])                # => "1, 2, or 3"
-p joinor([1, 2, 3], '; ')          # => "1; 2; or 3"
-p joinor([1, 2, 3], ', ', 'or')
+class ChildOne < Parent
+  def retrieve_deck?
+    puts Game.deck
+  end
+end
+
+#/////////////////////////////////////////////////////////////
+
+class ChildTwo < Parent
+end
+
+#/////////////////////////////////////////////////////////////
+
+class Deck
+  attr_accessor :of_cards
+
+  def initialize
+    @of_cards = 'CARDS'
+  end
+end
+
+#/////////////////////////////////////////////////////////////
+
+class Game
+  attr_accessor :child_one, :deck, :child_two
+
+  def initialize
+    @child_one = ChildOne.new
+    @child_two = ChildTwo.new
+    @deck = Deck.new
+  end
+
+  def start
+    puts deck.of_cards
+  end
+
+  # def self.retrieve_deck
+  #   puts 'okeydoke'
+  # end
+end
+
+c = Game.new
+c.start
