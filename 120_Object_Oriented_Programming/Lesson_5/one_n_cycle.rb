@@ -1,6 +1,6 @@
-def cycle(n)
+def cycle(num)
   if coprime?(divisible_array(10), divisible_array(n))
-    repeating_pattern(1000**100/n)
+    repeating_pattern(1000**100 / num)
   else
     -1
   end
@@ -8,7 +8,7 @@ end
 
 def divisible_array(num)
   arr = []
-  (2..num-1).each do |x|
+  (2..num - 1).each do |x|
     arr << x if num % x == 0
   end
 
@@ -20,13 +20,8 @@ def coprime?(array1, array2)
 end
 
 def repeating_pattern(num)
-  zeros = num.to_s.chars.size - 2
-  number = '1' + '0' * zeros
-  num *= number.to_i
-  num = num.to_i
+  arr = convert_decnum_to_whole_num(num)
 
-  arr = num.digits.reverse
-  
   counter = 1
   counter_two = 0
   new_arr = []
@@ -35,7 +30,7 @@ def repeating_pattern(num)
     until arr[0] == arr[counter]
       counter += 1
     end
-    
+
     new_arr = []
     counter_two = counter
 
@@ -54,6 +49,13 @@ def repeating_pattern(num)
   end
 
   new_arr.size
+end
+
+def convert_decnum_to_whole_num(num)
+  zeros = num.to_s.chars.size - 2
+  number = '1' + '0' * zeros
+  num *= number.to_i
+  num = num.to_i.digits.reverse
 end
 
 p cycle(33) # 2
