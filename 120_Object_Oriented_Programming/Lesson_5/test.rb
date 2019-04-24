@@ -1,12 +1,15 @@
-class Cat
-  AGE = 12
+class Animal
+  def a_public_method
+    "Will this work? " + self.a_protected_method
+  end
 
-  def initialize(name)
-    @name = name
+  protected
+
+  def a_protected_method
+    "Yes, I'm protected!"
   end
 end
 
-puts Cat::AGE
-
-kitty = Cat.new('kitty')
-puts kitty::AGE
+giraffe = Animal.new
+# puts giraffe.a_protected_method
+puts giraffe.a_public_method
