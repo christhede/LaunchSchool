@@ -6,7 +6,7 @@ verbs and nouns for naming our methods.
 Encapsulation:
 Is hiding pieces of functionality and making it acccesible or unaccessable outside the method, using the 'private' 
 and 'protected' keywords. It is a form of data protection. The private keyword makes the code hidden by it, only accessible 
-to the method in which it resides, you cannot call a method under the 'private' keyword. It will return a NoMethodError.
+to the class in which it resides, you cannot call a method under the 'private' keyword. It will return a NoMethodError.
 If you do need to use a method, but keep it hidden from outside of the object, you can use the 'protected' keyword.
 
 # ________________________________________________
@@ -87,7 +87,7 @@ Inheritance and mixins are two ways in ruby to achieve polymorphism.
 # ________________________________________________
 
 Classes:
-Classes define objects.
+Classes define objects. Think of classes as a blueprint for objects. They hold all of the behaviors that an obeject will be capable of using. 
 You define a class by the 'class' keyword.
 
 # example of defining a class
@@ -110,7 +110,7 @@ kitty.class # <- returns the class in which 'kitty' called from
 
 States:
 Tracks attributes for individual objects. Objects can have the same behaviours, but not the same states. States are created
-when instantiating an object. Can be different for each object. Instance variables keep track of state.
+when instantiating an object. Can be different for each object. Instance variables keep track of the state of an object.
 State is the collection of all the instance variables and their values defined for an object. Since state is part
 of the object, not the class, state is not inherited. 
 
@@ -501,5 +501,40 @@ In programming, implicit usually refers to something that is alreday done for yo
 Explicit: (programming term)
 Explicit is the manual way you want to achieve the change you wish to have by writing out the instructions as
 clearly as possible.
+
+# ________________________________________________
+
+FakeOperators:
+Fake operators are methods we define in the class that look like operators. Such as the >, or == methods. We overide the default method
+and define a new one in our class. We use these methods to make our code easier to read.
+
+# example:
+class Cat
+  attr_accessor :num
+
+  def initialize(num)
+    @num = num
+  end
+
+  def >(other)
+    self.num > other.num
+  end
+
+end
+
+kitty = Cat.new(6)
+rufus = Cat.new(2)
+
+puts kitty > rufus
+
+# ________________________________________________
+
+
+
+
+
+
+
+
 
 
