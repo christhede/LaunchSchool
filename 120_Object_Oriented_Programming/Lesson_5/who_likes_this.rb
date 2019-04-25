@@ -16,3 +16,24 @@
 
 # output: a new string including those names like so:
 # "Jacob and Alex like this"
+
+def likes(array)
+  case array.size
+  when 0
+    "no one likes this"
+  when 1
+    "#{array[0]} likes this"
+  when 2 
+    "#{array[0]} and #{array[1]} like this"
+  when 3
+    "#{array[0]}, #{array[1]} and #{array[2]} like this"
+  else
+    "#{array[0]}, #{array[1]} and #{array.size - 2} others like this"
+  end
+end
+
+likes([])
+likes(["Peter"])
+likes(["Peter", "Paul"])
+likes(["Peter", "Paul", 'Alex'])
+likes(['Alex', 'Jacob', 'Mark', 'Max'])
