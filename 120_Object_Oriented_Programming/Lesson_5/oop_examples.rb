@@ -1,13 +1,18 @@
 What is OOP used for?
-We use obect oriented programming techinques to seperate chunks of data into manageable pieces, and that if one functionality breaks,
+We use obect oriented programming techinques to seperate chunks of data into manageable containers, and that if one functionality breaks,
 it doesnt break the entire code. Much easier to manage. It also allows the programmer to think in another layer of abstraction by using
 verbs and nouns for naming our methods. 
 
 Encapsulation:
-Is hiding pieces of functionality and making it acccesible or unaccessable outside the method, using the 'private' 
+Is hiding pieces of functionality and making it unvavailable outside the code base, using the 'private' 
 and 'protected' keywords. It is a form of data protection. The private keyword makes the code hidden by it, only accessible 
 to the class in which it resides, you cannot call a method under the 'private' keyword. It will return a NoMethodError.
 If you do need to use a method, but keep it hidden from outside of the object, you can use the 'protected' keyword.
+
+# ________________________________________________
+
+Polymorphism:
+Is the ability for data to be represented as many differnt types. Such as class instances, or objects, might have the same behaviours, but not the same state.
 
 # ________________________________________________
 
@@ -242,8 +247,7 @@ for the instance variable specified by the symbol passed in as an argument.
 Self: 
 
 ClassMethods:
-Self outside of the method defintion is referring to the class itself and can be used
-to define a class method.
+Self outside of the method defintion is referring to the class itself and can be used to define class methods.
 
 # example:
 class Cat
@@ -255,6 +259,7 @@ end
 Cat.speak # prints 'Cat method speaks'
 
 Reassigning multiple instance variables at once:
+Use self when calling setter methods from within the class. We use self to disambiguate between the setter method, and a new local variable. 
 Self within an instance method is referencing the instance (object) that called the method.
 
 # example:
@@ -433,10 +438,10 @@ puts kitty
 
 Modules:
 Extracting multi use methods to a superclass. A way to add in behaviours to a class. 
-Usually if the behaviours can be used accross multiple Classes.
+Usually if the behaviours can be used accross multiple Classes. The module is mixed into a class useing the 'include' keyword, followed by the name.
 They also use the 'has a' relationship with the class objects. You cannot create an object within a module. 
 It is convention in Ruby to use the 'able' suffix when naming modules because the verb describes exactly
-what the module is doing.
+what the module is capable of doing.
 
 # example
 module Swimmable
@@ -505,8 +510,9 @@ clearly as possible.
 # ________________________________________________
 
 FakeOperators:
-Fake operators are methods we define in the class that look like operators. Such as the >, or == methods. We overide the default method
-and define a new one in our class. We use these methods to make our code easier to read.
+Fake operators are symbols that look like operators, but are actually instance methods we define in the class for special functionality.
+Such as the >, or == methods. We overide the default method and define a new one in our class. We use these methods to make our code easier to read,
+as well as .
 
 # example:
 class Cat
@@ -529,6 +535,21 @@ puts kitty > rufus
 
 # ________________________________________________
 
+Equality:
+The == operator is actually a method in ruby that compares two objects to see if they are the same value. By default, will return a boolean.
+Behind the scenes, the == actually looks like this. # str1.==(str2)
+ 
+equal? is a method that not only checks to see if two objects are the same value, but if they are pointing to the same space in memory.
+
+str1 = "something"
+str2 = "something"
+str3 = str1
+
+puts str1 == str2 # true
+
+puts str1.equal? str2 # false
+
+puts str1.equal? str3 # true
 
 
 
