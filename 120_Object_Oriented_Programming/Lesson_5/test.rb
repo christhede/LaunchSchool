@@ -102,7 +102,7 @@ puts chris.delegate # Not able to delegate - undefined method error
 
 jim = PartTimeEmployee.new("Jim", 123)
 puts jim
-# Name: jim
+# Name: Jim
 # Type: PartTimeEmployee
 # Serial Number: 123
 # Vacation Days: 0
