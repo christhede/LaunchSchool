@@ -47,21 +47,27 @@ only be called explicitly
 From outside of the class, protected methods act just like private methods, are not accessible.
 From inside the class, protected methods are accessible just like public methods.
 
+The difference between private and protected is, protected methods can also be called from within other instances of the same class.
+
 # example:
-class Animal
-  def a_public_method
-    "Will this work? " + self.a_protected_method
+class Meditator
+  def initialize(hours)
+    @hours = hours
+  end
+
+  def more_experienced?(other_person)
+    hours > other_person.hours
   end
 
   protected
-
-  def a_protected_method
-    "Yes, I'm protected!"
-  end
+    attr_reader :hours  # We have made the accessor protected
 end
 
-giraffe = Animal.new
-puts giraffe.a_public_method #Will this work? Yes, I'm protected!
+m1 = Meditator.new 3000 # new instance of class Mediator
+m2 = Meditator.new 5000 # new instance of class Mediator
+
+puts m2.more_experienced? m1  # Output: => true
+puts m1.more_experienced? m2  # Output: => false
 
 # ________________________________________________
 
