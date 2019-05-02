@@ -13,6 +13,12 @@ If you do need to use a method, but keep it hidden from outside of the object, y
 
 Polymorphism:
 Is the ability for data to be represented as many differnt types. Such as class instances, or objects, might have the same behaviours, but not the same state.
+The ability of different objects to respond in different ways to the same message (i.e. method call)
+Polymorphism is the provision of a single interface to entities of different types. Method overidinig \, module mixins 
+# ________________________________________________
+
+Ducktyping:
+
 
 # ________________________________________________
 
@@ -82,6 +88,7 @@ Is a way of modelling relationships betweeen different objects. Collaboration is
 A collaborator can be of any object, depending on the design of the context of your program.
 1. Collaborator objects can be of any type: Custom class object, hash, array, string, integer etc.
 2. Collaborator objects are always part of another objects state.
+ # dependancies - review 
 
 # ________________________________________________
 
@@ -355,6 +362,43 @@ puts civic.wheels # => 4
 bullet = Motorcycle.new
 puts bullet.wheels # => 2
 
+
+# constants have lexical scope, which means they remain where they were first defined
+
+module ChangeWheels
+  def change_wheels
+    "Changing #{self.class::WHEELS} wheels!"
+  end
+end
+
+
+class Car
+  include ChangeWheels
+  
+  WHEELS = 4
+  
+  def number_of_wheels
+    WHEELS
+  end
+end
+
+class Motorcycle
+  include ChangeWheels
+  
+  WHEELS = 2
+end
+
+herbie = Car.new
+p herbie.number_of_wheels
+
+bike = Motorcycle.new
+
+p herbie.change_wheels
+p bike.change_wheels
+
+# Class is an object and Object is a class. 
+
+p String.ancestors
 
 # ________________________________________________
 
