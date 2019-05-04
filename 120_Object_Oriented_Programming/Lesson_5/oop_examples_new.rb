@@ -12,6 +12,7 @@ to the class in which it resides, you cannot call a method under the 'private' k
 
 Polymorphism:
 <<<<<<< HEAD
+Modules and inheritance are polymorphism.
 Is the ability for data to be represented as many differnt types. Such as class instances, or objects, might have the same behaviours, but not the same state.
 The ability of different objects to respond in different ways to the same message (i.e. method call)
 Polymorphism is the provision of a single interface to entities of different types. Method overidinig \, module mixins 
@@ -19,11 +20,13 @@ Polymorphism is the provision of a single interface to entities of different typ
 
 Ducktyping:
 
-=======
+
+# ________________________________________________
+
+
 Is the ability for data to be represented as many differnt types. Such as class instances, or objects, might have the same behaviours, 
 but not the same state. Is the ability for data to be represented as many types. Using pre-written code for multipe purposes. 
 Inheritance and mixins are two ways in ruby to achieve polymorphism.
->>>>>>> b83809cdf4387b30a2932ff11f9835afe81457b2
 
 # ________________________________________________
 
@@ -60,8 +63,7 @@ puts sparky.age # Private method error
 Protected:
 From outside of the class, protected methods act just like private methods, and are not accessible. The only way to have external 
 access to a protected method is to call it through a public method. From inside the class, protected methods are accessible just like public methods.
-
-The difference betweeen private and protected methods are...
+Protected can access another object's protected method that comes from the same class, Private can't.
 
 # example:
 class Animal
