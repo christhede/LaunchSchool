@@ -196,12 +196,43 @@ class Cat; end
 Objects: 
 Everything in ruby is an object. We use classes to create objects. Objects are a way of holding information from a class. 
 You can find out what class an object is assigned to with the 'class' method. Some objects will hold different information (state) than another object,
-eventhough they are instances of the same class.
+eventhough they are instances of the same class. Classes are the molds and objects are what is procured from a mold.
 
 # creating an object:
 kitty = Cat.new
 
 kitty.class # <- returns the class in which 'kitty' called from
+
+# ________________________________________________
+
+MethodLookup:
+The order in which Ruby looks for a called method. You can find the path Ruby looks for the method called by using
+the ancestors method.
+
+module Speakable
+  def speak
+    'ahhhh'
+  end
+end
+
+class Animal
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Cat < Animal
+  include Speakable
+end
+
+puts Cat.ancestors
+
+# cat
+# speakable
+# animal
+# object
+# kernal
+# Basicobject
 
 # ________________________________________________
 
