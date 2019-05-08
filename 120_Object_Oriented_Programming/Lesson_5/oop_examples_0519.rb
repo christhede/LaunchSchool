@@ -58,7 +58,6 @@ array_of_animals.each do |animal|
   feed_animal(animal)
 end
 
-
 # ________________________________________________
 
 Ducktyping:
@@ -180,7 +179,9 @@ Is a way of modelling relationships betweeen different objects. Collaboration is
 A collaborator can be of any object, depending on the design of the context of your program.
 1. Collaborator objects can be of any type: Custom class object, hash, array, string, integer etc.
 2. Collaborator objects are always part of another objects state.
- # dependancies - review 
+ 
+
+ dependancies - review 
 
 # ________________________________________________
 
@@ -201,7 +202,7 @@ eventhough they are instances of the same class. Classes are the molds and objec
 # creating an object:
 kitty = Cat.new
 
-kitty.class # <- returns the class in which 'kitty' called from
+kitty.class # <- returns the class in which 'kitty' called from - Cat
 
 # ________________________________________________
 
@@ -457,7 +458,7 @@ Cat.total_number_of_cats # prints 2, the total number of cats initalized
 # ________________________________________________
 
 Constants:
-A type of variable that should never change.
+A type of variable that should never change. Constants within a class use lexical scope.
 
 # example:
 class Cat
@@ -716,7 +717,7 @@ clearly as possible.
 FakeOperators:
 Fake operators are symbols that look like operators, but are actually instance methods we define in the class for special functionality.
 Such as the >, or == methods. We overide the default method and define a new one in our class. We use these methods to make our code easier to read,
-as well as .
+
 
 # example:
 class Cat
