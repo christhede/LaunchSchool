@@ -17,7 +17,7 @@
 # a string
 
 def args_to_string(array)
-	array.map {|element| element.class == Array && element.size > 1 ? element[0].size > 1 ? '--' + element.join(' ') : '-' + element.join(' ') : element }.join(' ')
+	array.map {|x| x.class == Array && x.size > 1 ? x[0].size > 1 ? '--' + x.join(' ') : '-' + x.join(' ') : x }.join(' ')
 end
 
 def commandline(array)

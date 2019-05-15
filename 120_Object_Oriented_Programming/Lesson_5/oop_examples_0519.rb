@@ -1,11 +1,11 @@
 What is OOP used for?
 We use the object oriented programming paradigm to seperate chunks of data into manageable containers. With being able to seperate chunks of code,
 if one piece of functionality breaks, it doesnt break the entire code. It also allows the programmer to think in another layer of abstraction by using
-verbs and nouns for naming our methods. 
+verbs and nouns for naming our methods.
 
 Encapsulation:
-Is hiding pieces of functionality and making it unvavailable outside of the code base, using the 'private' 
-and 'protected' keywords. It is a form of data protection. The private keyword makes the code hidden by it, only accessible 
+Is hiding pieces of functionality and making it unvavailable outside of the code base, using the 'private'
+and 'protected' keywords. It is a form of data protection. The private keyword makes the code hidden by it, only accessible
 to the class in which it resides, you cannot call a method under the 'private' keyword. It will return a NoMethodError.
 
 class Cat
@@ -14,7 +14,7 @@ class Cat
   end
 
   private
-
+  
   attr_reader :name
 end
 
@@ -28,7 +28,7 @@ Modules and inheritance are uses of polymorphism.
 Is the ability for data to be represented as many differnt types. Such as class instances, or objects, might have the same behaviours, but not the same state.
 The ability of different objects to respond in different ways to the same message (i.e. method call)
 Polymorphism is the provision of a single interface to entities of different types. Method overidinig, module mixins.
-Polymorphism is designing your methods in such a way that you can treat a bunch of different types as one single type. 
+Polymorphism is designing your methods in such a way that you can treat a bunch of different types as one single type.
 
 # excample:
 class Animal
@@ -64,58 +64,58 @@ Ducktyping:
 Duck typing in computer programming is the application of the 'duck test'. "If it walks like a duck and quacks like a duck,
 then it must be a duck." To be determined that if a method can be used for a particular purpose.
 In duck typing, an objects suitability is determined by the presense of certain methods and properties
-rather than the type of obejct itself. 
+rather than the type of obejct itself.
 
 # example:
-class Duck  
-  def quack  
-    'Quack!'  
-  end  
-  
-  def swim  
-    'Paddle paddle paddle...'  
-  end  
-end  
-  
-class Goose  
-  def honk  
-    'Honk!'  
+class Duck
+  def quack
+    'Quack!'
   end
 
-  def swim  
-    'Splash splash splash...'  
-  end  
-end  
-  
-class DuckRecording  
-  def quack  
+  def swim
+    'Paddle paddle paddle...'
+  end
+end
+
+class Goose
+  def honk
+    'Honk!'
+  end
+
+  def swim
+    'Splash splash splash...'
+  end
+end
+
+class DuckRecording
+  def quack
     play
-  end  
-  
-  def play  
-    'Quack!'  
-  end  
-end  
-  
-def make_it_quack(duck)  
-  duck.quack  
+  end
+
+  def play
+    'Quack!'
+  end
 end
 
-puts make_it_quack(Duck.new)  
-puts make_it_quack(DuckRecording.new)  
-  
-def make_it_swim(duck)  
-  duck.swim  
+def make_it_quack(duck)
+  duck.quack
 end
 
-puts make_it_swim(Duck.new)  
+puts make_it_quack(Duck.new)
+puts make_it_quack(DuckRecording.new)
+
+def make_it_swim(duck)
+  duck.swim
+end
+
+puts make_it_swim(Duck.new)
 puts make_it_swim(Goose.new)
 
 # ________________________________________________
 
 Private:
-The private keyword is used when you have code that you dont want to be accessible outside of the class. They are 
-only to be used within the class in which it is called by other methods. The only way to have external access to a private method is to 
+The private keyword is used when you have code that you dont want to be accessible outside of the class. They are
+only to be used within the class in which it is called by other methods. The only way to have external access to a private method is to
 call it through a public method. Think of private methods as internal helper methods.
 
 # example:
@@ -144,7 +144,7 @@ puts sparky.age # Private method error
 # ________________________________________________
 
 Protected:
-From outside of the class, protected methods act just like private methods, and are not accessible. The only way to have external 
+From outside of the class, protected methods act just like private methods, and are not accessible. The only way to have external
 access to a protected method is to call it through a public method. From inside the class, protected methods are accessible just like public methods.
 Protected can access another object's protected method that comes from the same class, Private can't.
 
@@ -179,14 +179,14 @@ Is a way of modelling relationships betweeen different objects. Collaboration is
 A collaborator can be of any object, depending on the design of the context of your program.
 1. Collaborator objects can be of any type: Custom class object, hash, array, string, integer etc.
 2. Collaborator objects are always part of another objects state.
- 
 
- dependancies - review 
+
+ dependancies - review
 
 # ________________________________________________
 
 Classes:
-Classes define objects. Think of classes as a blueprint for objects. They hold all of the behaviors that an obeject will be capable of using. 
+Classes define objects. Think of classes as a blueprint for objects. They hold all of the behaviors that an obeject will be capable of using.
 You define a class by the 'class' keyword.
 
 # example of defining a class
@@ -194,8 +194,8 @@ class Cat; end
 
 # ________________________________________________
 
-Objects: 
-Everything in ruby is an object. We use classes to create objects. Objects are a way of holding information from a class. 
+Objects:
+Everything in ruby is an object. We use classes to create objects. Objects are a way of holding information from a class.
 You can find out what class an object is assigned to with the 'class' method. Some objects will hold different information (state) than another object,
 eventhough they are instances of the same class. Classes are the molds and objects are what is procured from a mold.
 
@@ -241,7 +241,7 @@ States:
 Tracks attributes for individual objects. Objects can have the same behaviours, but not the same states. States are created
 when instantiating an object. Can be different for each object. Instance variables keep track of the state of an object.
 State is the collection of all the instance variables and their values defined for an object. Since state is part
-of the object, not the class, state is not inherited. 
+of the object, not the class, state is not inherited.
 
 # example:
 class Cat
@@ -257,8 +257,8 @@ end
 
 # ________________________________________________
 
-Behaviors: 
-Are what objects are capable of doing through instance methods. 
+Behaviors:
+Are what objects are capable of doing through instance methods.
 
 # example:
 class Cat
@@ -276,14 +276,14 @@ kitty = Cat.new('Kitty')
 
 # ________________________________________________
 
-Attributes: 
+Attributes:
 An attribute is an instance variable name and value. Therfore, attributes must be accessible from outside the class
-with accessor methods. 
+with accessor methods.
 
 An attributes getter and setter method values will be inherited by a superclass, but the name and value
 behind the attribute do not participate in inheritance. Attribute getter and setter methods are inheritable.
-  
-"Ruby defines the attributes of its objects by defining instance methods that initialize instance 
+
+"Ruby defines the attributes of its objects by defining instance methods that initialize instance
 variables, instantiated from the classes."
 
 # Example:
@@ -300,12 +300,12 @@ kitty = Cat.new('Kitty')
 kitty.name # returns 'Kitty' <- That is the attribute
 # ________________________________________________
 
-InitializeMethod: 
+InitializeMethod:
 A method that gets called everytime you create a new object. Also known as the constructor method.
 
 # example:
 class Cat
-  def initialize # <- gets called everytime you create a new object. 
+  def initialize # <- gets called everytime you create a new object.
     puts "I've been initialized!"
   end
 end
@@ -315,7 +315,7 @@ end
 InstanceVariables:
 Instance variables are responsible for keeping track of an objects state. They are one way to tie data to objects.
 They exist as long as the object instance exists.
-Instance variables and their values are not inheritable, but instance variables within a getter or setter method, are. 
+Instance variables and their values are not inheritable, but instance variables within a getter or setter method, are.
 
 # example:
 class Cat
@@ -326,7 +326,7 @@ end
 
 # ________________________________________________
 
-InstanceMethods: 
+InstanceMethods:
 How we perform actions within an object.
 You call instance methods by first calling the object, followed by the method name.
 
@@ -346,7 +346,7 @@ puts kitty.speak # <- calling the instance method
 
 # ________________________________________________
 
-AccessorMethods: 
+AccessorMethods:
 Only job is to return or reset an objects state, with getter and setter methods.
 Conventionally, we name the getter and setter methods the same as the instance variable we are exposing and setting.
 
@@ -377,7 +377,7 @@ for the instance variable specified by the symbol passed in as an argument.
 
 # ________________________________________________
 
-Self: 
+Self:
 
 Self outside of the method defintion is referring to the class itself and can be used to define class methods.
 
@@ -394,7 +394,7 @@ Self within an instance method is referencing the instance (object) that called 
 
 Can be used for reassigning multiple instance variables at once:
 Use self when calling setter methods from within the class. We use self to target the setter method, if we didnt have self, Ruby would think
-we wanted to set a new local variable. 
+we wanted to set a new local variable.
 
 # example:
 class Cat
@@ -434,9 +434,9 @@ puts Swimmable.swim # I'm swimming!"
 
 # ________________________________________________
 
-ClassVariables: 
+ClassVariables:
 Class variables are prefaced with two '@' symbols and are used to store class data. A typical way to use class variables is
-to keep track of how many instances of a certain class we have created. 
+to keep track of how many instances of a certain class we have created.
 
 # example:
 class Cat
@@ -524,9 +524,9 @@ end
 
 class Car
   include ChangeWheels
-  
+
   WHEELS = 4
-  
+
   def number_of_wheels
     WHEELS
   end
@@ -534,7 +534,7 @@ end
 
 class Motorcycle
   include ChangeWheels
-  
+
   WHEELS = 2
 end
 
@@ -546,7 +546,7 @@ bike = Motorcycle.new
 p herbie.change_wheels
 p bike.change_wheels
 
-# Class is an object and Object is a class. 
+# Class is an object and Object is a class.
 
 p String.ancestors
 
@@ -554,15 +554,15 @@ p String.ancestors
 
 
 to_s Method:
-The puts method already calls to_s on its argument, which when called on an object, or instance of a class, 
-returns the calling object. We add a custom to_s to the class to overide the default output. 
+The puts method already calls to_s on its argument, which when called on an object, or instance of a class,
+returns the calling object. We add a custom to_s to the class to overide the default output.
 
 # example:
 
 class Cat; end
 
 kitty = Cat.new
-puts kitty # prints: #<Cat:0x00007fee9a94b278> 
+puts kitty # prints: #<Cat:0x00007fee9a94b278>
 
 
 class Cat
@@ -598,8 +598,8 @@ puts kitty.speak # prints out "Hello!"
 # ________________________________________________
 
 Super:
-super is a built in function that allows us to call methods up the inheritance heirarchy. When you call super from within the method, 
-Ruby will look for a method up the inheritance heirarchy of the same name and call it. 
+super is a built in function that allows us to call methods up the inheritance heirarchy. When you call super from within the method,
+Ruby will look for a method up the inheritance heirarchy of the same name and call it.
 
 # example:
 class Animal
@@ -641,7 +641,7 @@ puts kitty # "kitty brown"
 # ________________________________________________
 
 Modules:
-Modules are used to extract multi-use methods to multiple classes. The module is mixed into a class using the 'include' keyword, 
+Modules are used to extract multi-use methods to multiple classes. The module is mixed into a class using the 'include' keyword,
 followed by the module name. Modules use the assossiation, or 'has-a' relationship with classes. Such as, we have class named 'Cat', and we want to mixin
 a module named 'Clawable'. Our cat HAS claws to use. In Ruby, it is conventional to use the 'able' suffix when naming modules because the
 verb describes what the module is capable of doing. You cannot create an object from a module.
@@ -743,7 +743,7 @@ puts kitty > rufus
 Equality:
 The == operator is actually a method in ruby that compares two objects to see if they are the same value. By default, == will return a boolean.
 Behind the scenes, the == actually looks like this: str1.==(str2). But with Rubys syntactical sugar, it lets us use it this way: str1 == str2
- 
+
 equal? is a method that not only checks to see if two objects are the same value, but if they are pointing to the same space in memory.
 
 In Ruby, since you cant modify a symbol or an integer, two symbols or two objects with the same value, means they are also pointing to the same object.
@@ -773,30 +773,3 @@ end
 Exceptions:
 An exception is basically an exceptional state in your code. Its not necessarily a bad thing, but it is a way that the code lets you know something
 behaved unexpetedly.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
