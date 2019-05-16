@@ -42,119 +42,107 @@ class TodoList
     @title = title
     @todos = []
   end
-  
-  def add(collaborator)
-    if collaborator.class != Todo
-      raise TypeError.new("Can only add Todo objects")
-    else
-      @todos << collaborator
-    end
-  end
-  
+
   def size
-    puts @todos.size
+    @todos.size
   end
-  
+
   def first
-    puts @todos.first
+    @todos.first
   end
-  
+
   def last
-    puts @todos.last
+    @todos.last
   end
-  
-  def to_a
-    @todos.each {|todo| puts todo}
-  end
-  
-  def done?
-    puts @todos.all? { |todo| todo.done?}
-  end
-  
-  def item_at(index)
-    if @todos[index]
-      puts @todos[index]
-    else
-      raise IndexError.new
-    end
-  end
-  
-  def mark_done_at(index)
-    if @todos[index]
-      @todos[index].done!
-    else
-      raise IndexError.new
-    end
-    
-    puts @todos[index]
-  end
-  
-  def mark_undone_at(index)
-    if @todos[index]
-      @todos[index].undone!
-    else
-      raise IndexError.new
-    end
-    
-    puts @todos[index]
-  end
-  
-  def done!
-    @todos.each { |todo| todo.done! }
-    @todos.each { |todo| puts todo }
-  end
-  
+
   def shift
-    puts @todos.shift
+    @todos.shift
   end
-  
+
   def pop
-    puts @todos.pop
+    @todos.pop
   end
-  
-  def remove_at(index)
-    if @todos[index]
-      @todos.delete_at(index)
-    else
-      raise IndexError.new
+
+  def done?
+    @todos.all? { |todo| todo.done? }
+  end
+
+  def <<(todo)
+    raise TypeError, 'can only add Todo objects' unless todo.instance_of? Todo
+
+    @todos << todo
+  end
+  alias_method :add, :<<
+
+  def item_at(idx)
+    @todos.fetch(idx)
+  end
+
+  def mark_done_at(idx)
+    item_at(idx).done!
+  end
+
+  def mark_undone_at(idx)
+    item_at(idx).undone!
+  end
+
+  def done!
+    @todos.each_index do |idx|
+      mark_done_at(idx)
     end
   end
-  
+
+  def remove_at(idx)
+    @todos.delete(item_at(idx))
+  end
+
   def to_s
-    puts "---- Today's Todos ----"
-    @todos.each {|todo| puts todo}
+    text = "---- #{title} ----\n"
+    text << @todos.map(&:to_s).join("\n")
+    text
+  end
+
+  def to_a
+    @todos.clone
+  end
+
+  def each
+    @todos.each do |todo|
+      yield(todo)
+    end
+    self
+  end
+
+  def select
+    list = TodoList.new(title)
+    each do |todo|
+      list.add(todo) if yield(todo)
+    end
+    list
+  end
+
+  # returns first Todo by title, or nil if no match
+  def find_by_title(title)
+    select { |todo| todo.title == title }.first
+  end
+
+  def all_done
+    select { |todo| todo.done? }
+  end
+
+  def all_not_done
+    select { |todo| !todo.done? }
+  end
+
+  def mark_done(title)
+    find_by_title(title) && find_by_title(title).done!
+  end
+
+  def mark_all_done
+    each { |todo| todo.done! }
+  end
+
+  def mark_all_undone
+    each { |todo| todo.undone! }
   end
 end
-
-todo1 = Todo.new("Buy milk")
-todo2 = Todo.new("Clean room")
-todo3 = Todo.new("Go to gym")
-list = TodoList.new("Today's Todos")
-
-list.add(todo1)                 # adds todo1 to end of list, returns list
-list.add(todo2)                 # adds todo2 to end of list, returns list
-list.add(todo3)                 # adds todo3 to end of list, returns list
-#list.add(1)                     # raises TypeError with message "Can only add Todo objects"
-
-#list.size
-#list.first
-#list.last
-#list.to_a
-#list.done?
-
-#list.item_at(0)
-#list.item_at(100)
-    
-#list.mark_undone_at             # raises ArgumentError
-#list.mark_done_at(1)          # marks the 2nd item as not done,
-#list.mark_done_at(100)
-
-#list.mark_undone_at(1)
-#list.done!
-  
-#list.to_a
-  
-#list.remove_at(1)
-list.to_a
-list.done!
-list.to_s

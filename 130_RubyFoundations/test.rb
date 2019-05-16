@@ -1,20 +1,11 @@
-def select(array)
-  counter = 0
-  returned_array = []
-  
-  while counter < array.size
-    returned_array << array[counter] if yield(array[counter])
-    counter += 1
-  end
-  
-  p returned_array
+# madeup_method is referenced here but not invoked so it doesn't matter if it exists or not
+my_proc = Proc.new { madeup_method }
+
+# we then define a method called madeup_method
+
+def madeup_method
+  puts 'Hello!'
 end
-    
 
-array = [1, 2, 3, 4, 5]
-
-array = [1, 2, 3, 4, 5]
-
-select(array) { |num| num.odd? }      # => [1, 3, 5]
-select(array) { |num| puts num }      # => [], because "puts num" returns nil and evaluates to false
-select(array) { |num| num + 1 }       # => [1, 2, 3, 4, 5], because "num + 1" evaluates to true
+# now when we call the Proc madeup_method is invoked, outputting the String 'Hello!'
+my_proc.call # => 'Hello!'
