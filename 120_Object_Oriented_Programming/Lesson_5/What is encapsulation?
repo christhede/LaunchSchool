@@ -1,0 +1,8 @@
+What is encapsulation?
+Encapsulation is hiding functionality from outside of the class with the private and protected keywords. 
+Encapsulation makes code hiddin outside of the codebase. 
+
+Polymorphism is the ability for data to be represented as many different types.
+Such as in the case of inheritance and modules.
+
+example:

@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 class Meditator
   def initialize(hours)
     @hours = hours
@@ -132,3 +133,7 @@ puts jim.delegate # Not able to delegate - undefined method error
 
 puts m2.more_experienced? m1  # Output: => true
 puts m1.more_experienced? m2  # Output: => false
+=======
+fevd fvnkjnsvdjf
+ru
+>>>>>>> c510da5349f3e1822fe0cca8d7ee99ced95a2699
