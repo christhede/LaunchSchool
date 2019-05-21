@@ -4,7 +4,10 @@ def count(collection)
   count
 end
 
-
+def count(collection)
+  counter = 0
+  count = 0
+  
 
 puts count([1,2,3,4,5]) { |value| value.odd? } == 3
 puts count([1,2,3,4,5]) { |value| value % 3 == 1 } == 2

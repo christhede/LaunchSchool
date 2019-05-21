@@ -186,5 +186,11 @@ LONGSTRING
 
 --------------------------------------
 
->> Code Coverage
+>> File class
+# You use the File class when reading a document that is in simple text. You can do this by using the File#open method, and you have to also close the file with File#close.
+
+# example:
+file = File.open('sample_text.txt', 'r')
+# do processing here
+file.close
 
