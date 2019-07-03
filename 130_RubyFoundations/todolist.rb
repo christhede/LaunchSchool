@@ -126,11 +126,11 @@ class TodoList
     select { |todo| todo.title == title }.first
   end
 
-  def all_done
+  def select_all_done
     select { |todo| todo.done? }
   end
 
-  def all_not_done
+  def select_all_not_done
     select { |todo| !todo.done? }
   end
 
