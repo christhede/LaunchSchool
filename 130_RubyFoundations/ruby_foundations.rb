@@ -1,7 +1,7 @@
 => Closures:
 # General programming concept that allows programmers to save a chunk of code and execute it at a later time. Its called a closure because its said to bind its surrounding artifacts and builds an enclosure around everything to be called upon later. You can think of a closure as a method that you can pass around and execute. In Ruby, closures are implemented in a Proc object. 
 
-# three ways of using closures in Ruby: 
+# three ways of using closures in Ruby (or Proc objects):
 # 1. Instantiating an object from the Proc class
 # 2. Using lambdas
 # 3. Using blocks
@@ -15,9 +15,14 @@
     
 # Blocks are one way to implement a closure in Ruby. Closures are a way to pass around chunks of code. Blocks can take arguments, just like regular methods. Unlike regular methods, it wont complain about the wrong number of arguments passed in. Blocks return a value, just like normal methods. Blocks are a way to defer information decisions until invocation time. It allows method callers to refine the method for a specific use case. Allows for multi-functional method building. Good for sandwich code scenarios, like closing a Fileautomatically.
 
+# Two main use cases are:
+# 1. Defer some implementation code to method invocation decision.
+# 2. Methods that need to perform some "before" and "after" actions - sandwich code.
+
 --------------------------------------
 
 => Proc:
+# A chunk of code that we can pass around and execute later. It retains references to its surroundingartifacts – its binding.
 
 --------------------------------------
 	
@@ -98,5 +103,13 @@ Symbol#to_proc
 --------------------------------------
 
 Why do we write tests?
-	# As beginners, we write tests to prevent regression. Thats it. 
+	# As beginners, we write tests to prevent regression. Thats it.
+
+--------------------------------------
+
+=> Arity
+The rules around enforcing the number of arguments you can call on a closure
+
+
+
 
