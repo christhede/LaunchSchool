@@ -9,10 +9,17 @@ class Transaction
     @amount_paid = 0
   end
 
+<<<<<<< HEAD
   def prompt_for_payment(input: $stdin) # We've set a default parameter for stdin
     loop do
       puts "You owe $#{item_cost}.\nHow much are you paying?"
       @amount_paid = input.gets.chomp.to_f # notice that we call gets on that parameter
+=======
+  def prompt_for_payment
+    loop do
+      puts "You owe $#{item_cost}.\nHow much are you paying?"
+      @amount_paid = gets.chomp.to_f
+>>>>>>> bc60058d04bf3fbca28776d23381ef4f962b9e69
       break if valid_payment? && sufficient_payment?
       puts 'That is not the correct amount. ' \
            'Please make sure to pay the full cost.'
@@ -28,5 +35,9 @@ class Transaction
   def sufficient_payment?
     amount_paid >= item_cost
   end
+<<<<<<< HEAD
 end
 
+=======
+end
+>>>>>>> bc60058d04bf3fbca28776d23381ef4f962b9e69

@@ -3,6 +3,10 @@ class Car
 
   def initialize
     @wheels = 4
-    @name = nil
+  end
+
+  def ==(other)                       # assert_equal would fail without this method
+    other.is_a?(Car) && name == other.name
   end
 end
+

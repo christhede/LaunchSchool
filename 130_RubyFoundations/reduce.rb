@@ -1,6 +1,8 @@
+require 'pry'
+
 def reduce(array, acc=array.first)
   acc == array.first ? counter = 1 : counter = 0
-  
+  binding.pry
   while counter < array.size
     acc = yield(acc, array[counter])
     counter += 1
