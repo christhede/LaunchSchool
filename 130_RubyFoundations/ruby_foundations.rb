@@ -17,12 +17,12 @@
 --------------------------------------
 
 >> Proc:
-# Procs are chunks of code that can be executed anywhere. 
+# Procs are chunks of code that can be executed anywhere. A proc is a block itself, bound to a variable to be passed around. 
 
 --------------------------------------
 
 >> Lambda
-# Lambas are functions in Ruby that act anonmylously. 
+# Lambas are functions in Ruby that act anonmylously. The biggest difference between a proc and a lambda is that lambdas care about how many arguments are passed in. Procs do not. 
  
   
 
@@ -193,4 +193,27 @@ LONGSTRING
 file = File.open('sample_text.txt', 'r')
 # do processing here
 file.close
+
+
+--------------------------------------
+>> & symbol
+
+# Ruby checks whether the object after the & is a proc object. If it is, it uses that object as-is. If it isnt, Ruby tries to convert that object to a proc with #to_proc. An error will ocurr if the #to_proc fails to return a proc object. 
+# If all is well, the & turns the proc into a block. 
+
+
+--------------------------------------
+>> to_s
+# not only does to_s turn almost anything into a string, it will also convert any number into a base number if you pass in an integer as an argument.
+# example:
+
+8.to_s      #=> "8"
+8.to_s(8)   #=> "10"
+8.to_s(10)  #=> "8"
+
+--------------------------------------
+
+>> method keyword
+# allows you to save methods into a variable to be used later
+
 
