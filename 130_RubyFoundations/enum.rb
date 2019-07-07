@@ -36,7 +36,7 @@ end
 #   break if index == 6
 # end
 
-factorial.each_with_index.map do |num, index|
-	p num
+factorial.each_with_index do |num, index|
+	num
 	break if index == 6
 end

@@ -1030,7 +1030,7 @@ assert_equal(4, car.wheels)
 
 --------------------------------------
 
-Enumerator::Yilder
+Enumerator::Yielder
 How enumetators pass values to a method/method block downstream.
 
 # example:
