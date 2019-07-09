@@ -12,26 +12,30 @@
 # 3. with each iteration, move the n digit forward with creating a counter += 1 along with the tail end counter += 1, until you reach the end of the array
 
 class Series
-	attr_accessor :string
-
 	def initialize(string)
-		@string = string
-	end
-
-	def to_s
-		@string
+		@number = string.chars.map(&:to_i)
 	end
 
 	def slices(n)
+		raise ArgumentError, "Arg too large for series of numbers"  if n > @number.size
 
-		@string.size.times do |x|
-			puts @string.slice(x..n)
-			x += 1
-			n += 1
-			break if n == @string
+		idx1 = 0
+		idx2 = n-1
+		arr = []
+		until idx2 == @number.size
+			arr << @number.slice(idx1..idx2)
+			idx1 += 1
+			idx2 += 1
+			break if idx2 == @number.size
 		end
+
+		arr
 	end
 end
 
-series = Series.new("123458")
-series.slices(4)
+series = Series.new("01234")
+p series.slices(1)
+
+
+
+

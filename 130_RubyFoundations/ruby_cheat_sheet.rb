@@ -1043,24 +1043,54 @@ e.map { |n| n * 2 } # => [2, 4]
 
 # In the first iteration, the  number 1 is being passed to the yielder, which takes place of the n parameter, which evaluates to 2, then in the the number 2 is passed to the yielder, which takes place of the n again, and that evaluates to 4, then map returns an array of the evaluated numbers from the block.
 
+--------------------------------------
 
+>> Prime numbers
+# Are numbers greater than one that can only be divisable by 1 and itself.
+# These numbers include: 2, 3, 5, 7, 11, 13, 17, 19, 29 etc. 
 
+>> Composite Numbers
+# The opposite of prime numbers
 
+--------------------------------------
 
+>> Sieve of Eratothenes
+# Starting with an array of 2 to n, we say that all numbers are prime.
+# Then, starting at 2, we say that all divisiable remaining numbers of 2 must not be prime.
+# Then, moving up the array, we say that 3 is prime, but all divisable numbers of 3 must not be prime.
 
+--------------------------------------
 
+>> Base 10
+Base 10 is commonly used around the world, and uses decimal places. Base 10 is the bases of the place value number system and is also called the decimal system. It uses 10 as its base number, hence the name. 
 
+example: 
+  233 # decimal
+= 2*10^2 + 3*10^1 + 3*10^0
+= 2*100  + 3*10   + 3*1
+= 200 + 30 + 3
+= 233
 
+>> Base 8
+Uses the same algorithm as base 10, but instead of the power of 10s, we use the power of 8s. 
 
+example:
+  233 # octal
+= 2*8^2 + 3*8^1 + 3*8^0
+= 2*64  + 3*8   + 3*1
+= 128   + 24    + 3
+= 155
 
+>> Trinary
+Similar to the above, but the number does not allow number above 3.
 
+example: 
+# "102012"
+    1       0       2       0       1       2    # the number
+1*3^5 + 0*3^4 + 2*3^3 + 0*3^2 + 1*3^1 + 2*3^0    # the value
+  243 +     0 +    54 +     0 +     3 +     2 =  302
 
-
-
-
-
-
-
+--------------------------------------
 
 
 
