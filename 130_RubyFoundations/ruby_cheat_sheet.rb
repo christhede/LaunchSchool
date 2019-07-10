@@ -1,3 +1,23 @@
+--------------------------------------
+
+PEDAC process
+1. Problem
+Understand the problem 
+• Identify input and output
+• Make the requirements explicit
+• Identify rules
+• Mental model of the problem (optional)
+2. examples/test cases
+• Validate understanding the problem
+3. Data structure
+• How we represent data that we will work with when converting the input to output.
+4. algorithm
+• Steps for converting input to output
+5. code
+• Implementation of Algorithm
+
+--------------------------------------
+
 What is OOP used for?
 We use the object oriented programming paradigm to seperate chunks of data into manageable containers. With being able to seperate chunks of code,
 if one piece of functionality breaks, it doesnt break the entire code. It also allows the programmer to think in another layer of abstraction by using
@@ -1081,14 +1101,17 @@ example:
 = 128   + 24    + 3
 = 155
 
->> Trinary
+>> Trinary (Base 3)
 Similar to the above, but the number does not allow number above 3.
 
-example: 
+example:
 # "102012"
     1       0       2       0       1       2    # the number
 1*3^5 + 0*3^4 + 2*3^3 + 0*3^2 + 1*3^1 + 2*3^0    # the value
   243 +     0 +    54 +     0 +     3 +     2 =  302
+
+
+>> Base 2 - Binary
 
 --------------------------------------
 
