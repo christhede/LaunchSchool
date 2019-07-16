@@ -1,7 +1,7 @@
-<<<<<<< HEAD
-io = StringIO.new
+def format_date(string)
+  p string.split(/[\/-]/).reverse.join('.')
+end
 
-io.puts "Hello World"
-io.string
-=======
->>>>>>> bc60058d04bf3fbca28776d23381ef4f962b9e69
+
+format_date('2016-06-17') # -> '17.06.2016'
+format_date('2017/05/03') # -> '03.05.2017'

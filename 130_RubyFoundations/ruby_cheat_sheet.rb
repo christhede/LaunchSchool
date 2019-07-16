@@ -1115,6 +1115,115 @@ example:
 
 --------------------------------------
 
+ >> REGEXP:
+ # Holds a regular expression used to match a pattern against strings.
+ # Created using the brackets /.../
+
+
+>> =~ operator:
+# Rubys basic pattern matching operator
+
+/stack/ =~ 'haystack' #=> 3
+'haystack' =~ /stack/ #=> 3
+/stick/ =~ 'haystack' #=> nil
+
+>> match method:
+Returns a MatchData object
+
+/stack/.match('haystack') #=> #<MatchData "stack">
+backslash-escape these objects (, ), [, ], {, }, ., ?, +, *.
+/\(OK\)/.match('(OK)')
+
+>> Character classes:
+# Delimitated with square brackets [] and lists characters that might appear at that point in the match.
+# [ab] means 'a' or 'b', /ab/ means 'ab'
+
+/W[aeiou]rd/.match("Word") #=> #<MatchData "Word">
+# Ranges can be written out like this [a-z] || [A-Z] || [a-zA-Z]
+
+# If the first character is a caret (^), then the rest is inverted and matches everything except those named.
+/[^a-eg-z]/.match('f') #=> #<MatchData "f">
+
+# The following also acts like character classes:
+/./ - any character except newline
+/./m - any character, the m represents newline mode
+/\w/ - a word character ([a-zA-z0-9])
+/\W/ - a non-word character ([^a-zA-z0-9])
+/\d/ - a digit character ([0-9])
+/\D/ - a non-digit character ([^0-9])
+/\f/ - a hexdigit character ([0-9A-Fa-f])
+/\F/ - a non hexdigit character (^[0-9A-Fa-f])
+/\S/ - a non whitespace character
+
+>> POSIX bracket expressions
+similar to chracter classes.
+
+>> Repetition: 
+# The above can be followed by a repetition metacharacter to specify how many times they need to occur. Such metacharacters are called quanitifiers.
+* - zero or more times # /[^a-eg-z]*/.match('fff')
++ - one or more times # /[^a-eg-z]*/.match('fff')
+? - Zero or one times (optional)
+{n} - exactly n times
+{n,} - n or more times
+{.m} - m or less times
+{n,m} - at least n and at most m
+
+>> Grouping:
+# Paratheses also group the terms they enclose, allowing them to be quantified as one atomis whole.
+
+The pattern below matches a vowel followed by 2 word characters:
+/[aeiou]\w{2}/.match("Caenorhabditis elegans") #=> #<MatchData "aen">
+Whereas the following pattern matches a vowel followed by a word character, twice, 
+i.e. [aeiou]\w[aeiou]\w: 'enor'.
+/([aeiou]\w){2}/.match("Caenorhabditis elegans") #=> #<MatchData "enor" 1:"or">
+
+>> Anchors:
+# Anchors to a specific position in the string.  
+
+ ^ - matches beginning of line # /^abc/.match('abcd')
+ $ - matches end of line
+ \A - matches begining of string # /\Aabc|th|ch/.match('chris') #<MatchData "abc"
+ \Z - matches end of string, if string ends in a newline
+ \z - matches end of string
+ \G - matches first matching position
+ \b - matches word boundries when outside brackets
+ \B - matches non word boundries
+
+ >> Alternation:
+ # Using the pipe characters (|) to seperate patterns of two or more. Matches any instance of the succession of the characters betwen the pipes
+ example:
+
+/cat|dog|rabbit/ #matches
+The lazy 'cat.'
+The 'dog' barks.
+Down the 'rabbit' hole.
+
+>> Flags/Modifiers
+# append certain characters after the closed '/' to modify the regex. 
+
+/i 
+# append 'i' to the end of the regex, on the other side of the closing slash, to ignore the case and select any instance of the word in any case format.
+example:
+/launch/i #matches 'launch', 'LAUNCH', 'Launch'
+
+>> Quantifiers:
+* - zero or more times
++ - one or more times
+? - once or not at all
+
+adding a lazy match:
+use the ? operator after any of the above quanitifiers.
+
+example: 
+xabcbcbacy.match(/a[abc]*?c/) # matches 'abc' and 'ac'
+
+--------------------------------------
+
+>> gsub
+
+>> sub
+
+
 
 
 
