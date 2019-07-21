@@ -1223,14 +1223,41 @@ xabcbcbacy.match(/a[abc]*?c/) # matches 'abc' and 'ac'
 
 >> sub
 
+--------------------------------------
 
+>> Stamp Rubygem
+# Lets you format dates and times based on human-friendly examples, not arcane strftime directives.
+example:
+require 'date'
 
+date = Date.today
+date.stamp('March 4, 2019') # => July 21, 2019
+date.stamp('04/05/2019') # 07/21/2019
 
+--------------------------------------
 
+>> Rake Rubygem
+# Automates many functions that require to build, test, package and install programs.
 
+# call rake methods with:
+bundle exec rake methodname
+# example:
+bundle exece rake hello # => "Hello There"
 
+bundle exec rake # outputs the default method, we dont need to call default to execute.
 
+bundle exec rake -T # shows all of the tasks designed by Rake.
 
+--------------------------------------
+
+require "bundler/gem_tasks"
+# Adds several tasks to your Rakefile that are common to Rubygems.
+# It defines: rake build, rake install and rake release. 
+
+--------------------------------------
+
+>> dependancies
+Are the rubygems attached to a project folder 
 
 
 
