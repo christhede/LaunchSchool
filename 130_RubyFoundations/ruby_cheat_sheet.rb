@@ -1257,7 +1257,7 @@ require "bundler/gem_tasks"
 --------------------------------------
 
 >> dependancies
-Are the rubygems attached to a project folder 
+# Are the rubygems attached to a project folder 
 
 
 
