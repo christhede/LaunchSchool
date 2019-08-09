@@ -810,7 +810,7 @@ behaved unexpetedly.
 
 # Adding blocks to methods gives the method extra functionality. You can call the method while passing in different information to the block.
     
-# Blocks are one way to implement a closure in Ruby. Closures are a way to pass around chunks of code. Blocks can take arguments, just like regular methods. Unlike regular methods, it wont complain about the wrong number of arguments passed in. Blocks return a value, just like normal methods. Blocks are a way to defer information decisions until invocation time. It allows method callers to refine the method for a specific use case. Allows for multi-functional method building. Good for sandwich code scenarios, like closing a Fileautomatically.
+# Blocks are one way to implement a closure in Ruby. Closures are a way to pass around chunks of code. Blocks can take arguments, just like regular methods. Unlike regular methods, it wont complain about the wrong number of arguments passed in. Blocks return a value, just like normal methods. Blocks are a way to defer information decisions until invocation time. It allows method callers to refine the method for a specific use case. Allows for multi-functional method building. Good for sandwich code scenarios, like closing a File automatically.
 
 # Two main use cases are:
 # 1. Defer some implementation code to method invocation decision.
@@ -887,13 +887,28 @@ end
 --------------------------------------
   
 >> Methods with Explicit Block Parameters
-# Explicit block paramets have an & symbol infront of the parameter. The & symbol converts the block parameter into a simple proc object. We drop the & symbol when referencing the parameter in the code.Ruby converts explicit blocks into simple Proc objects. You invoke those proc objects with the 'call' method.
+# Explicit block paramets have an & symbol infront of the parameter. The & symbol converts the block parameter into a simple proc object. We drop the & symbol when referencing the parameter in the code.Ruby converts explicit blocks into simple Proc objects. You invoke those proc objects with the 'call' method. It provides extra flexibility.
   
 #example:
-def test(&block)
-  puts "What's &block? #{block}"
+
+def test2(block)
+  puts "hello"
+  block.call                    # calls the block that was originally passed to test()
+  puts "good-bye"
 end
 
+def test(&block)
+  puts "1"
+  test2(block)
+  puts "2"
+end
+
+test { puts "xyz" }
+# => 1
+# => hello
+# => xyz
+# => good-bye
+# => 2
 --------------------------------------
 
 >> Binding (or surrounding evironment/context)
@@ -1018,8 +1033,8 @@ file.close
 
 (&:to_s)
 
-First, Ruby checks that the object after & is a proc object, if it isnt, it call to_proc on it. An error will occur if it cannot turn it into a proc object.
-Then, if all is well, it turn the proc into a block.
+# First, Ruby checks that the object after & is a proc object, if it isnt, it call to_proc on it. An error will occur if it cannot turn it into a proc object.
+# Then, if all is well, it turn the proc into a block.
 
 --------------------------------------
 
@@ -1260,10 +1275,128 @@ require "bundler/gem_tasks"
 # Are the rubygems attached to a project folder 
 
 
+--------------------------------------
+
+>> Send (object)
+# send(symbol[args]) -> object
+# Invokes the method, identified by symbol, passing it any arguements specified.
+# allows to invoke another method by name
+
+# It sends a message to an object instance and its ancestors in class heirarchy until some method reacts (because its name matches the first arguemtn)
+# Practically speaking, these lines are equivilant
+
+1.send '+', 2
+1.+(2)
+1 + 2 
+
+# The send method can dynamically call on method. You can assign attributes dynamically. 
+# example:
+
+class Car
+  attr_accessor :make, :model, :year
+end
+
+# Instead of:
+c = Car.new
+c.make="Honda"
+c.model="CRV"
+c.year="2014"
+
+# or:
+c.send("make=", "Honda")
+c.send("model=", "CRV")
+c.send("year=","2014")
+
+# The send method allows us to 
+c = Car.new()
+params.each do |key, value|
+  c.send("#{key}=", value)
+end
+
+# example 2:
+# If you have an array of string, and try to call on your object, it wont work.:
+atts = ['name', 'description']
+@project = Project.first
+atts.each do |a|
+  puts @project.a
+end
+# => NoMethodError: undefined method `a'
+
+# However, you can use send to send the string to the object.
+atts = ['name', 'description']
+@project = Project.first
+atts.each do |a|
+  puts @project.send(a)
+end
+# => Vandalay Project
+# => A very important project
 
 
+--------------------------------------
+
+>> Rspec
+# Rspec is a domain specific language. Rspec bends over backwards to allow developers to write code like natural english, but at the cost of simplicity. 
+
+--------------------------------------
 
 
+>> Calling methods from self within a class
+
+# example:
+
+class SumOfMultiples
+  def self.to(limit, multiples = [3, 5])
+    p multiples
+    p limit
+  end
+
+  def initialize(*multiples)
+    @multiples = multiples
+  end
+
+  def to(limit)
+    self.class.to(limit, @multiples)
+  end
+end
+
+SumOfMultiples.to(15)
+SumOfMultiples.new(7, 13, 17).to(20)
+
+# OR ---------------------------------
+
+class SumOfMultiples
+  def initialize(*multiples)
+    @multiples = multiples
+  end
+
+  def self.to(limit, multiples = [3, 5])
+    p multiples
+    p limit
+  end
+
+  def to(limit)
+    SumOfMultiples.to(limit, @multiples)
+  end
+end
+
+SumOfMultiples.to(15)
+SumOfMultiples.new(7, 13, 17).to(20)
+
+--------------------------------------
+
+class House
+  def self.recite
+    new.recite
+  end
+
+  def recite
+    'outputs to the screen'
+  end
+end
+
+p House.recite
+
+# allows you to not have to use self on every method definition used in recite.
 
 
 
