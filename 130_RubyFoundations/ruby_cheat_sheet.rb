@@ -816,6 +816,8 @@ behaved unexpetedly.
 # 1. Defer some implementation code to method invocation decision.
 # 2. Methods that need to perform some "before" and "after" actions - sandwich code.
 
+# In Ruby, any method can take an optional block as an implicit parameter. 
+
 --------------------------------------
 
 >> Proc:
@@ -887,7 +889,7 @@ end
 --------------------------------------
   
 >> Methods with Explicit Block Parameters
-# Explicit block paramets have an & symbol infront of the parameter. The & symbol converts the block parameter into a simple proc object. We drop the & symbol when referencing the parameter in the code.Ruby converts explicit blocks into simple Proc objects. You invoke those proc objects with the 'call' method. It provides extra flexibility.
+# Explicit block parameters have an & symbol in front of the parameter. The & symbol converts the block parameter into a simple proc object. We drop the & symbol when referencing the parameter in the code.Ruby converts explicit blocks into simple Proc objects. You invoke those proc objects with the 'call' method. It provides extra flexibility.
   
 #example:
 
@@ -923,7 +925,7 @@ name = "Robert"
 chunk_of_code = Proc.new {puts "hi #{name}"}
 name = "Griffin III"        # re-assign name after Proc initialization
 
-call_me(chunk_of_code)
+p call_me(chunk_of_code) # returns "Hi Griffin III" nil 
   
 --------------------------------------
 
@@ -1097,7 +1099,7 @@ e.map { |n| n * 2 } # => [2, 4]
 --------------------------------------
 
 >> Base 10
-Base 10 is commonly used around the world, and uses decimal places. Base 10 is the bases of the place value number system and is also called the decimal system. It uses 10 as its base number, hence the name. 
+# Base 10 is commonly used around the world, and uses decimal places. Base 10 is the bases of the place value number system and is also called the decimal system. It uses 10 as its base number, hence the name. 
 
 example: 
   233 # decimal
@@ -1107,7 +1109,7 @@ example:
 = 233
 
 >> Base 8
-Uses the same algorithm as base 10, but instead of the power of 10s, we use the power of 8s. 
+# Uses the same algorithm as base 10, but instead of the power of 10s, we use the power of 8s. 
 
 example:
   233 # octal
@@ -1240,43 +1242,6 @@ xabcbcbacy.match(/a[abc]*?c/) # matches 'abc' and 'ac'
 
 --------------------------------------
 
->> Stamp Rubygem
-# Lets you format dates and times based on human-friendly examples, not arcane strftime directives.
-example:
-require 'date'
-
-date = Date.today
-date.stamp('March 4, 2019') # => July 21, 2019
-date.stamp('04/05/2019') # 07/21/2019
-
---------------------------------------
-
->> Rake Rubygem
-# Automates many functions that require to build, test, package and install programs.
-
-# call rake methods with:
-bundle exec rake methodname
-# example:
-bundle exece rake hello # => "Hello There"
-
-bundle exec rake # outputs the default method, we dont need to call default to execute.
-
-bundle exec rake -T # shows all of the tasks designed by Rake.
-
---------------------------------------
-
-require "bundler/gem_tasks"
-# Adds several tasks to your Rakefile that are common to Rubygems.
-# It defines: rake build, rake install and rake release. 
-
---------------------------------------
-
->> dependancies
-# Are the rubygems attached to a project folder 
-
-
---------------------------------------
-
 >> Send (object)
 # send(symbol[args]) -> object
 # Invokes the method, identified by symbol, passing it any arguements specified.
@@ -1339,7 +1304,6 @@ end
 
 --------------------------------------
 
-
 >> Calling methods from self within a class
 
 # example:
@@ -1397,6 +1361,118 @@ end
 p House.recite
 
 # allows you to not have to use self on every method definition used in recite.
+
+--------------------------------------
+
+>> Bundler Gem 
+>> gem install bundler
+# Bundler lets you desribe exactly which Ruby and Gems you want to with your Ruby apps. Specifically, it lets you install miltiple version of each Gem under a specific version of Ruby and then use the proper version in your app. 
+
+# The dependancies specified in this file will show other developers what is needed to run this project. It comes in handy if we need to run our project on another server. It will install all our dependancies to use the project on the new site. 
+
+>> Gemfile
+# Bundler relies on a file named Gemfile to tell it which ruby version and gems to use.
+
+# example:
+source 'https://rubygems.org'
+
+ruby '2.3.1'
+gem 'sinatra'
+gem 'erubis'
+gem 'rack'
+gem 'rake', '~>10.4.0'
+
+>> bundle install
+# the command that installs the gems and ruby version from gemfile and creates a new gemfile.lock
+
+>> Gemfile.lock 
+# Is created after runningt he gemfile. Shows all of the dependancies for your program
+# Bundler uses the Gemfile to generate a Gemfile.lock file via `bundle install` command. Gemfile.lock describes the actual versions of Gems that you app needs, including any Gems that the Gems listed in Gemfile depend on. 
+
+# The `bundler/Setup` tell your Ruby program to use Gemfile.lock to determine which Gem versions it should load. 
+
+# example:
+GEM
+  remote: https://RubyGems.org/
+  specs:
+    erubis (2.7.0)
+    rack (1.6.4)
+    rack-protection (1.5.3)
+      rack
+    rake (10.4.2)
+    sinatra (1.4.7)
+      rack (~> 1.5)
+      rack-protection (~> 1.4)
+      tilt (>= 1.3, < 3)
+    tilt (2.0.5)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  erubis
+  rack
+  rake (~> 10.4.0)
+  sinatra
+
+RUBY VERSION
+   ruby 2.3.1p112
+
+BUNDLED WITH
+   1.13.6
+
+--------------------------------------
+
+>> Stamp Rubygem
+# Lets you format dates and times based on human-friendly examples, not arcane strftime directives.
+# example:
+require 'date'
+
+date = Date.today
+date.stamp('March 4, 2019') # => July 21, 2019
+date.stamp('04/05/2019') # 07/21/2019
+
+--------------------------------------
+
+>> Rake Rubygem
+# Automates many functions that require to build, test, package and install programs.
+
+# Rake uses a Rakefile that lives in the project directory. The file describes the tasks that rake can perform for your project, and how to perform those tasks. 
+
+# example:
+desc 'Say hello'
+task :hello do
+  puts "Hello there. This is the `hello` task."
+end
+
+desc 'Say goodbye'
+task :bye do
+  puts 'Bye now!'
+end
+
+desc 'Do everything'
+task :default => [:hello, :bye]
+
+# call rake methods with:
+bundle exec rake methodname
+# example:
+bundle exece rake hello # => "Hello There"
+
+bundle exec rake # outputs the default method, we dont need to call default to execute.
+
+bundle exec rake -T # shows all of the tasks designed by Rake.
+
+--------------------------------------
+
+require "bundler/gem_tasks"
+# Adds several tasks to your Rakefile that are common to Rubygems.
+# It defines: rake build, rake install and rake release. 
+
+--------------------------------------
+
+>> dependancies
+# Are the rubygems attached to a project folder 
+
 
 
 

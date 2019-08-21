@@ -1,11 +1,3 @@
-class House
-  def self.recite
-    new.recite
-  end
+a = %w(a b c d e)
 
-  def recite
-    'outputs to the screen'
-  end
-end
-
-p House.recite
+p a.insert(3, 5, 6, 7)
