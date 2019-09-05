@@ -18,4 +18,4 @@ class Series
 end
 
 series = Series.new('92834')
-p series.slices(3)
+p series.slices(6)

@@ -793,8 +793,7 @@ else
 end
 
 Exceptions:
-An exception is basically an exceptional state in your code. Its not necessarily a bad thing, but it is a way that the code lets you know something
-behaved unexpetedly.
+# An exception is basically an exceptional state in your code. Its not necessarily a bad thing, but it is a way that the code lets you know something behaved unexpetedly.
 
 >> Closures:
 # General programming concept that allows programmers to save a chunk of code and execute it at a later time. Its called a closure because its said to bind its surrounding artifacts and builds an enclosure around everything to be called upon later. You can think of a closure as a method that you can pass around and execute. In Ruby, closures are implemented in a Proc object. 
@@ -808,7 +807,7 @@ behaved unexpetedly.
 >> Blocks
 # In Ruby, method blocks have lenient arity rules, which is why it doesnt complain when you pass in different number of arguments; Method Blocks dont enfore arguement count
 
-# Adding blocks to methods gives the method extra functionality. You can call the method while passing in different information to the block.
+# Adding blocks to methods gives the method extra functionality. You can call the method while passing in different information to the block, using the yield keyword
     
 # Blocks are one way to implement a closure in Ruby. Closures are a way to pass around chunks of code. Blocks can take arguments, just like regular methods. Unlike regular methods, it wont complain about the wrong number of arguments passed in. Blocks return a value, just like normal methods. Blocks are a way to defer information decisions until invocation time. It allows method callers to refine the method for a specific use case. Allows for multi-functional method building. Good for sandwich code scenarios, like closing a File automatically.
 
@@ -889,7 +888,7 @@ end
 --------------------------------------
   
 >> Methods with Explicit Block Parameters
-# Explicit block parameters have an & symbol in front of the parameter. The & symbol converts the block parameter into a simple proc object. We drop the & symbol when referencing the parameter in the code.Ruby converts explicit blocks into simple Proc objects. You invoke those proc objects with the 'call' method. It provides extra flexibility.
+# Explicit block parameters have an & symbol in front of the parameter. The & symbol converts the block parameter into a simple proc object. We drop the & symbol when referencing the parameter in the code. Ruby converts explicit blocks into simple Proc objects. You invoke those proc objects with the 'call' method. It provides extra flexibility.
   
 #example:
 
@@ -914,7 +913,7 @@ test { puts "xyz" }
 --------------------------------------
 
 >> Binding (or surrounding evironment/context)
-# Procs keep track of their surrounding context, and drags it around wherever the 'chuck of code' is passed along with. This includes local variables, method refernces, constants, whatever it needs to execute the code. 
+# Procs keep track of their surrounding context, and drags it around wherever the 'chuck of code' is passed along with. This includes local variables, method references, constants, whatever it needs to execute the code. 
 
 # example:
 def call_me(some_code)
@@ -991,7 +990,15 @@ end
 --------------------------------------
 
 >> Setup Method
-Sets up information for the rest of the test suite. 
+# Sets up information for the rest of the test suite. 
+
+class CarTest < MiniTest::Test
+  def setup
+    @car = Car.new
+  end
+
+  ...
+end
 
 --------------------------------------
 
@@ -1472,6 +1479,7 @@ require "bundler/gem_tasks"
 
 >> dependancies
 # Are the rubygems attached to a project folder 
+
 
 
 
