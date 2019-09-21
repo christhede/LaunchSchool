@@ -1,34 +1,38 @@
-require 'minitest/autorun'
-require 'minitest/reporters'
-Minitest::Reporters.use!
-
+require "minitest/autorun"
 require_relative 'cash_register'
 require_relative 'transaction'
 
-class CashRegisterTest < MiniTest::Test
-	def setup
-		@register = CashRegister.new(50)
-		@transaction = Transaction.new(25)
-		@transaction.amount_paid = 30
-	end
 
-	def test_accept_money
-		previous_amount = @register.total_money
-		@register.accept_money(@transaction)
-		current_amount = @register.total_money
+class CashRegisterTest < Minitest::Test
+  def setup
+    @register = CashRegister.new(4000)
+    @transaction = Transaction.new(20)
+  end
 
-		assert_equal(80, current_amount)
-	end
+  def test_accept_money
+    @transaction.amount_paid = 20
 
-	def test_cash_register_change
-		previous_amount = @register.total_money
-		@register.accept_money(@transaction)
-		current_amount = @register.total_money
+    previous_amount = @register.total_money
+    @register.accept_money(@transaction)
+    current_amount = @register.total_money
+    
+    assert_equal previous_amount + 20, current_amount
+  end
 
-		assert_equal(5, @register.change(@transaction))
-	end
+  def test_change
+    @transaction.amount_paid = 25
 
-	def test_give_receipt
-		assert_equal("You've paid $25.", @register.give_receipt(@transaction))
-	end
+    assert_equal 5, @register.change(@transaction)
+  end
+
+  def test_give_receipt
+    @transaction.amount_paid = 20
+    assert_output("You've paid $20.\n") { @register.give_receipt(@transaction) }
+  end
+
+  def test_prompt_for_payment
+    input = StringIO.new('20\n')
+    @transaction.prompt_for_payment(input: input)
+    assert_equal 20, @transaction.amount_paid
+  end
 end

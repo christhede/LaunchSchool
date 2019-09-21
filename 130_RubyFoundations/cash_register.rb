@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-
-
-=======
->>>>>>> bc60058d04bf3fbca28776d23381ef4f962b9e69
 # cash_register.rb
 
 class CashRegister
@@ -17,11 +12,7 @@ class CashRegister
   end
 
   def give_receipt(transaction)
-<<<<<<< HEAD
     puts "You've paid $#{transaction.item_cost}."
-=======
-    "You've paid $#{transaction.item_cost}."
->>>>>>> bc60058d04bf3fbca28776d23381ef4f962b9e69
   end
 
   def accept_money(transaction)
@@ -34,8 +25,4 @@ class CashRegister
     change(transaction)
     give_receipt(transaction)
   end
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> bc60058d04bf3fbca28776d23381ef4f962b9e69

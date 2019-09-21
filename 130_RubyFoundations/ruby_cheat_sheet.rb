@@ -619,8 +619,7 @@ puts kitty.speak # prints out "Hello!"
 --------------------------------------
 
 Super:
-super is a built in function that allows us to call methods up the inheritance heirarchy. When you call super from within the method,
-Ruby will look for a method up the inheritance heirarchy of the same name and call it.
+# super is a built in function that allows us to call methods up the inheritance heirarchy. When you call super from within the method, Ruby will look for a method up the inheritance heirarchy of the same name and call it.
 
 # example:
 class Animal
@@ -662,10 +661,7 @@ puts kitty # "kitty brown"
 --------------------------------------
 
 Modules:
-Modules are used to extract multi-use methods to multiple classes. The module is mixed into a class using the 'include' keyword,
-followed by the module name. Modules use the assossiation, or 'has-a' relationship with classes. Such as, we have class named 'Cat', and we want to mixin
-a module named 'Clawable'. Our cat HAS claws to use. In Ruby, it is conventional to use the 'able' suffix when naming modules because the
-verb describes what the module is capable of doing. You cannot create an object from a module.
+# Modules are used to extract multi-use methods to multiple classes. The module is mixed into a class using the 'include' keyword, followed by the module name. Modules use the assossiation, or 'has-a' relationship with classes. Such as, we have class named 'Cat', and we want to mixin a module named 'Clawable'. Our cat HAS claws to use. In Ruby, it is conventional to use the 'able' suffix when naming modules because the verb describes what the module is capable of doing. You cannot create an object from a module.
 
 # example
 module Swimmable
@@ -712,8 +708,6 @@ end
 
 kitty = Mammal::Cat.new
 puts kitty.speak
-
-
 
 CallingMethodsFromModules:
 
@@ -1034,16 +1028,28 @@ LONGSTRING
 # You use the File class when reading a document that is in simple text. You can do this by using the File#open method, and you have to also close the file with File#close.
 
 # example:
-file = File.open('sample_text.txt', 'r')
-# do processing here
+file = File.open('sample_text.txt', 'r') - # 'r' means we can read the text file, 'w' means to write 
+p file.read # reads the file as a string "..." etc
+p file # <File:sample_text.txt>
 file.close
 
 --------------------------------------
 
 (&:to_s)
 
+# the & symbol converts the proc into a block. 
 # First, Ruby checks that the object after & is a proc object, if it isnt, it call to_proc on it. An error will occur if it cannot turn it into a proc object.
 # Then, if all is well, it turn the proc into a block.
+
+# this code: 
+
+(&:to_s)
+
+# somehow gets converted to this code: 
+
+{ |n| n.to_s }
+
+# first, ruby wants to convert the object after & into a block, but it has to be a proc object to do so. So it calls to_proc on the object if it isnt already. Then the & symbol turns the object into a block. ruby is trying to turn to_s into a block. Since it's a symbol, calls to_proc, which then the & symbol turns it into a block, which turns out shortcut into the long form block usage. 
 
 --------------------------------------
 
@@ -1479,6 +1485,12 @@ require "bundler/gem_tasks"
 
 >> dependancies
 # Are the rubygems attached to a project folder 
+
+>> #each_cons(n) {...}
+shows each consecutive pattern of 1...3 
+
+
+
 
 
 
