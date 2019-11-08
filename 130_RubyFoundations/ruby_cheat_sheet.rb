@@ -799,7 +799,7 @@ Exceptions:
 
 --------------------------------------
 >> Blocks
-# In Ruby, method blocks have lenient arity rules, which is why it doesnt complain when you pass in different number of arguments; Method Blocks dont enfore arguement count
+# In Ruby, method blocks have lenient arity rules, which is why it doesnt complain when you pass in different number of arguments; Method Blocks dont enforce arguement count
 
 # Adding blocks to methods gives the method extra functionality. You can call the method while passing in different information to the block, using the yield keyword
     
@@ -830,7 +830,7 @@ my_second_proc.call('dog') # returns 'This is a dog.'
 
 >> Lambda:
 # Lambas are functions in Ruby that act anonmylously. They are part of the Proc class.
-# Lambdas DO care if they receive a wrong number of arguments, they will return an ArgumentError if ran without the right number of arguemnts. 
+# Lambdas DO care if they receive a wrong number of arguments, they WILL return an ArgumentError if ran without the right number of arguments. 
 
 # Lamda examples
 my_lambda = lambda { |thing| puts "This is a #{thing}." }
@@ -927,6 +927,14 @@ Symbol#to_proc
 
 # example:
 [1, 2, 3, 4, 5].map (&:to_s)
+
+#broken down further
+def map
+  yield(1, 2, 3, 4, 5)
+end
+
+a_proc = :to_s.to_proc          # explicitly call to_proc on the symbol
+map(&a_proc)
 
 --------------------------------------
 
