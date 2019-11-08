@@ -1145,10 +1145,16 @@ example:
 
 --------------------------------------
 
- >> REGEXP:
- # Holds a regular expression used to match a pattern against strings.
- # Created using the brackets /.../
+>> REGEXP:
+# Holds a regular expression used to match a pattern against strings.
+# Created using the brackets /.../
 
+:HANDY :REGEXP METHODS:
+
+#scan
+#match
+#split
+#gsub
 
 >> =~ operator:
 # Rubys basic pattern matching operator
@@ -1156,6 +1162,7 @@ example:
 /stack/ =~ 'haystack' #=> 3
 'haystack' =~ /stack/ #=> 3
 /stick/ =~ 'haystack' #=> nil
+string.scan(regexp) => 
 
 >> match method:
 Returns a MatchData object
@@ -1490,6 +1497,15 @@ require "bundler/gem_tasks"
 shows each consecutive pattern of 1...3 
 
 
+--------------------------------------
+
+>> How to Work With Coding Challenges
+1. Resist the urge to dive into code
+2. Read the description 3 times; produce an outline if necessary
+3. communicate and clarify
+4. have a plan (algorithm), and verify with that
+5. manage your energy 
+6. abstraction (load one thing at a time in your head)
 
 
 
