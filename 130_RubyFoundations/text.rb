@@ -1,8 +1,6 @@
-# file = File.open('sample_text.txt', 'r')
+# require_relative 'sample_text'
 
 class Text
-  # attr_reader :text
-
   def initialize(text)
     @text = text
   end
@@ -16,5 +14,8 @@ class Text
   end
 end
 
+# file = File.open('sample_text.txt')
+
 # text = Text.new(file.read)
+# # p file.read
 # p text.word_count
