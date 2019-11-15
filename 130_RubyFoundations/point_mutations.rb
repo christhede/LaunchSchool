@@ -1,32 +1,26 @@
-# if strand.chars.[index] == distance.chars.[index], then @count += 1
-# index += 1
+# compute distance over shortest length
+# first, check what length is shorter, then use that to calculate length
+# one by one, up to certain length, check to see if strand and strand2 equal the same letter. if not, += 1 to count
 
-# shortest string
-# if @strand.size < distance.size ? nil : 
-
-# require 'pry'
 
 class DNA
-  attr_reader :strand
+  attr_accessor :strand
 
   def initialize(strand)
-    @strand = strand.chars
-    @count = 0
+    @strand = strand
   end
 
-  def hamming_distance(distance)
-    @strand.each_with_index do |obj, idx|
-      break if idx == distance.chars.size
-      unless obj == distance.chars[idx]
-        @count += 1
-      end
+  def hamming_distance(strand2)
+    count = 0
+    length = 0
+    strand2.size > @strand.size ? length = @strand.size : length = strand2.size
+    0.upto(length-1) do |idx|
+      count += 1 if strand[idx] != strand2[idx]
     end
-    p @count
+
+    count
   end
 end
 
-# DNA.new('AGACAACAGCCAGCCGCCGGATT').hamming_distance('AGGCAA')
-# DNA.new('AGACAACAGCCAGCCGCCGGATT').hamming_distance('AGACATCTTTCAGCCGCCGGATTAGGCAA')
-# DNA.new('AGACAACAGCCAGCCGCCGGATT').hamming_distance('AGG')
-# AGACATCTTTCAGCCGCCGGATTAGGCAA
-# AGACAACAGCCAGCCGCCGGATT
+# dna = DNA.new('GGACGGATTCTGACCTGGACTAATTTTGGGG').hamming_distance('AGGACGGATTCTGACCTGGACTAATTTTGGGG')
+

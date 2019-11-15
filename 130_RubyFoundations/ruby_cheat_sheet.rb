@@ -1396,7 +1396,7 @@ p House.recite
 
 >> Bundler Gem 
 >> gem install bundler
-# Bundler lets you desrcibe exactly which Ruby and Gems you want to with your Ruby apps. Specifically, it lets you install miltiple version of each Gem under a specific version of Ruby and then use the proper version in your app. 
+# Bundler lets you desrcibe exactly which Ruby and Gems you want to with your Ruby apps. Specifically, it lets you install multiple versions of each Gem under a specific version of Ruby and then use the proper version in your app. 
 
 # The dependancies specified in this file will show other developers what is needed to run this project. It comes in handy if we need to run our project on another server. It will install all our dependancies to use the project on the new site. 
 
@@ -1409,10 +1409,11 @@ p House.recite
 # - What version of Ruby does your program need? (recommended, not required)
 # - What Rubygems does your porgram use?
 
-# example:
+# example of a gemfile:
 source 'https://rubygems.org'
 
 ruby '2.3.1'
+
 gem 'sinatra'
 gem 'erubis'
 gem 'rack'
