@@ -1045,9 +1045,19 @@ file.close
 
 (&:to_s)
 
-# the & symbol converts the proc into a block. 
-# First, Ruby checks that the object after & is a proc object, if it isnt, it call to_proc on it. An error will occur if it cannot turn it into a proc object.
-# Then, if all is well, it turn the proc into a block.
+# the & symbol has to convirt the object (to_s) in to a block
+  # first, checks to see if object is a proc object, if it isn't, calls to_proc on it.
+# then can turn to_s into a block
+
+long form of this code:
+
+def my_method
+  yield(2)
+end
+
+a_proc = :to_s.to_proc
+my_method(&a_proc)
+
 
 # this code: 
 
@@ -1057,7 +1067,6 @@ file.close
 
 { |n| n.to_s }
 
-# first, ruby wants to convert the object after & into a block, but it has to be a proc object to do so. So it calls to_proc on the object if it isnt already. Then the & symbol turns the object into a block. ruby is trying to turn to_s into a block. Since it's a symbol, calls to_proc, which then the & symbol turns it into a block, which turns out shortcut into the long form block usage. 
 
 --------------------------------------
 
@@ -1153,16 +1162,10 @@ example:
 
 --------------------------------------
 
->> REGEXP:
-# Holds a regular expression used to match a pattern against strings.
-# Created using the brackets /.../
+ >> REGEXP:
+ # Holds a regular expression used to match a pattern against strings.
+ # Created using the brackets /.../
 
-:HANDY :REGEXP METHODS:
-
-#scan
-#match
-#split
-#gsub
 
 >> =~ operator:
 # Rubys basic pattern matching operator
@@ -1170,7 +1173,6 @@ example:
 /stack/ =~ 'haystack' #=> 3
 'haystack' =~ /stack/ #=> 3
 /stick/ =~ 'haystack' #=> nil
-string.scan(regexp) => 
 
 >> match method:
 Returns a MatchData object
@@ -1394,17 +1396,24 @@ p House.recite
 
 >> Bundler Gem 
 >> gem install bundler
-# Bundler lets you desribe exactly which Ruby and Gems you want to with your Ruby apps. Specifically, it lets you install miltiple version of each Gem under a specific version of Ruby and then use the proper version in your app. 
+# Bundler lets you desrcibe exactly which Ruby and Gems you want to with your Ruby apps. Specifically, it lets you install multiple versions of each Gem under a specific version of Ruby and then use the proper version in your app. 
 
 # The dependancies specified in this file will show other developers what is needed to run this project. It comes in handy if we need to run our project on another server. It will install all our dependancies to use the project on the new site. 
 
 >> Gemfile
 # Bundler relies on a file named Gemfile to tell it which ruby version and gems to use.
+# usually needs four pieces of information:
 
-# example:
+# - where should bundler look for Rubygems it needs to install?
+# - Do you need a .gemspec file? 
+# - What version of Ruby does your program need? (recommended, not required)
+# - What Rubygems does your porgram use?
+
+# example of a gemfile:
 source 'https://rubygems.org'
 
 ruby '2.3.1'
+
 gem 'sinatra'
 gem 'erubis'
 gem 'rack'
@@ -1504,19 +1513,32 @@ require "bundler/gem_tasks"
 >> #each_cons(n) {...}
 shows each consecutive pattern of 1...3 
 
+--------------------------------------
+
+>> StringIO
+
+A way to replicate kernal functions and creating a mock object. 
+
+string = StringIO.new('30')
 
 --------------------------------------
 
->> How to Work With Coding Challenges
-1. Resist the urge to dive into code
-2. Read the description 3 times; produce an outline if necessary
-3. communicate and clarify
-4. have a plan (algorithm), and verify with that
-5. manage your energy 
-6. abstraction (load one thing at a time in your head)
+>> Hash
 
+Hash.new { |hash, key| hash[key] = [] }
 
+hsh[1] << 'this is one'
+hsh[2] << 'this is two'
+hsh[2] << 'this is three'
 
+# outputs
+{1=>['this is one'], 2=>['this is two', 'this is three']}
 
+>> sorting hashes. 
 
+hsh.sort # sorts the keys from lowest to highest
+hsh.sort.map {|key, values| [key, values.sort]} # sorts the keys, then sorts the values
+hsh.sort.map {|key, values| [key, values.sort]}.to_h #then turns it back into a hash
+
+--------------------------------------
 
